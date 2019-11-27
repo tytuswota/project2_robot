@@ -1,12 +1,12 @@
 #include "PinMapping.h"
 
 void setup() {
-  pinMode(D0, OUTPUT);
+  pinMode(D1, OUTPUT);
 }
 
 void loop() {
-  digitalWrite(D0, 0);
+  digitalWrite(D1, 0);
   delay(500);
-  digitalWrite(D0, 1);
+  digitalWrite(D1, 1);
   delay(500);
 }
