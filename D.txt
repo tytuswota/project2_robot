@@ -1,0 +1,11 @@
+1e keer project krijgen
+	git clone {url}
+laatste versie krijgen
+	git pull
+alle aanpassingen toevoegen
+	git add .
+	of git add {file}
+commit maken
+	git commit -m "wat je gedaan hebt"
+pushen
+	git piush
