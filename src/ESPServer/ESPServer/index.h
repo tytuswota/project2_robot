@@ -48,12 +48,6 @@ const char MAIN_page[] PROGMEM = R"=====(
           <span class="round"><i class="fa fa-chevron-right"></i></span>
          </a>
         </div>
-        <div>
-          <a href="\coolBlink" class="btn btn-1">
-           <span class="txt">Cool blink</span>
-          <span class="round"><i class="fa fa-chevron-right"></i></span>
-         </a>
-        </div>
      </div>
   </CENTER> 
 </BODY>

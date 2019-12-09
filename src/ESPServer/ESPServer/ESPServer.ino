@@ -18,8 +18,8 @@ MDNSResponder mdns;
  
 ESP8266WebServer server(80);
 String landingPage = MAIN_page;
-const char* ssid     = "wifiname";      //wifi name
-const char* password = "wifipassword";  //wifi password
+const char* ssid     = "Tesla IoT";      //wifi name
+const char* password = "fsL6HgjN";  //wifi password
 //FireData firebaseData;
 FirebaseData firebaseData;
 
