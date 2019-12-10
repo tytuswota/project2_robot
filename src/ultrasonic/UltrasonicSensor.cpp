@@ -3,11 +3,12 @@
 #include <Arduino.h>
 
 class UltrasonicSensor {
-  int trigPin, echoPin, *pulseTime;
+  int trigPin, echoPin;
+  unsigned long *pulseTime;
 
   public:
 
-  UltrasonicSensor(int trigPin, int echoPin, int *pulseTime, void(*isr)(void)) {
+  UltrasonicSensor(int trigPin, int echoPin, unsigned long *pulseTime, void(*isr)(void)) {
     if(!(echoPin == 2 || echoPin == 3)) {
       // not an interrupt pin in this case, error handling?
     }
@@ -27,7 +28,7 @@ class UltrasonicSensor {
     digitalWrite(trigPin, LOW);
   }
 
-  int getDistance() {
+  int getLastDistance() {
     return ((*pulseTime >> 2) / 2.9);
   }
 };

@@ -3,7 +3,8 @@
 #define TRIG_FRONT 4
 #define ECHO_FRONT 2
 
-int pulseTimeFront;
+volatile unsigned long pulseTimeFront;
+UltrasonicSensor *usFront;
 
 void isrFront() {
   static unsigned long int start;
@@ -12,15 +13,15 @@ void isrFront() {
   } else {
     pulseTimeFront = micros()-start;
   }
+  usFront->pulse();
 }
-
-UltrasonicSensor usFront(TRIG_FRONT, ECHO_FRONT, &pulseTimeFront, isrFront);
 
 void setup() {
   Serial.begin(9600);
+  usFront = new UltrasonicSensor(TRIG_FRONT, ECHO_FRONT, &pulseTimeFront, isrFront);
+  usFront->pulse();
 }
 
 void loop() {
-  usFront.pulse();
-  Serial.println(usFront.getDistance());
+  Serial.println(usFront->getLastDistance());
 }
