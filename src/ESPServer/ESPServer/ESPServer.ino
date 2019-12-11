@@ -51,7 +51,6 @@ void setup() {
 
   Firebase.begin("testforesp-25b98.firebaseio.com", "59g3REBCx30dp73gE5DdcxZr6q8E3ouJGjZuM1Xo");
 
-
   Serial.println("the fire base data");
   /*server.on("/", [](){
     server.send(200, "text/html", landingPage);
