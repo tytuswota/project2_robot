@@ -15,15 +15,17 @@
 #include "UltrasonicSensor.cpp"
 
 motorController motor(motorPin1A, motorPin1B, motorPin2A, motorPin2B);
-UltrasonicSensor *usVoor;
+UltrasonicSensor *usVoor, *usOnder;
 
 volatile unsigned long pulseTimeVoor;
+volatile unsigned long pulseTimeOnder;
 
 void setup() {
   Serial.begin(9600);
   pinMode(infraroodLinks, INPUT_PULLUP);
   pinMode(infraroodRechts, INPUT_PULLUP);
   usVoor = new UltrasonicSensor(ultrasoonTrigVoor, ultrasoonEchoVoor, &pulseTimeVoor, isrVoor);
+  usOnder = new UltrasonicSensor(ultrasoonTrigOnder, ultrasoonEchoOnder, &pulseTimeOnder, isrOnder);
   usVoor->pulse();
 }
 
@@ -31,11 +33,16 @@ void loop() {
   int infraroodLinksVal = digitalRead(infraroodLinks);
   int infraroodRechtsVal = digitalRead(infraroodRechts);
 
+  Serial.println("Sensor voor: " + (String)usVoor->getLastDistance());
   if(usVoor->getLastDistance() < 40){
     while(usVoor->getLastDistance() < 40){
       motor.motorStop();
-      Serial.println(usVoor->getLastDistance());
     }
+  }
+
+  Serial.println("Sensor onder: " + String(usOnder->getLastDistance()));
+  if(usOnder->getLastDistance() > 40) {
+    Serial.println("Afgrond!");
   }
 
   if(infraroodLinksVal == 1 && infraroodRechtsVal != 1){
@@ -58,6 +65,16 @@ void isrVoor() {
     start = micros();
   } else {
     pulseTimeVoor = micros()-start;
+  }
+  usOnder->pulse();
+}
+
+void isrOnder() {
+  static unsigned long int start;
+  if(digitalRead(ultrasoonEchoOnder)) {
+    start = micros();
+  } else {
+    pulseTimeOnder = micros()-start;
   }
   usVoor->pulse();
 }
