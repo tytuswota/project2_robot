@@ -19,6 +19,11 @@ UltrasonicSensor *usVoor, *usOnder;
 
 volatile unsigned long pulseTimeVoor;
 volatile unsigned long pulseTimeOnder;
+public boolean manualControl = false;
+public boolean manualForward = false;
+public boolean manualRight = false;
+public boolean manualLeft = false;
+public boolean manualBack = false;
 
 void setup() {
   Serial.begin(9600);
@@ -30,33 +35,102 @@ void setup() {
 }
 
 void loop() {
-  int infraroodLinksVal = digitalRead(infraroodLinks);
-  int infraroodRechtsVal = digitalRead(infraroodRechts);
 
-  Serial.println("Sensor voor: " + (String)usVoor->getLastDistance());
-  if(usVoor->getLastDistance() < 40){
-    while(usVoor->getLastDistance() < 40){
+  if (Serial.available() > 0) 
+  {
+   int x = Serial.read();
+   if(x == 5)
+   {
+    manualControl = true;
+    Serial.println("manual active");
+   }
+  }
+
+  if(!manualControl)
+  {
+    int infraroodLinksVal = digitalRead(infraroodLinks);
+    int infraroodRechtsVal = digitalRead(infraroodRechts);
+  
+    //Serial.println("Sensor voor: " + (String)usVoor->getLastDistance());
+    if(usVoor->getLastDistance() < 40){
+      while(usVoor->getLastDistance() < 40){
+        motor.motorStop();
+      }
+    }
+  
+    //Serial.println("Sensor onder: " + String(usOnder->getLastDistance()));
+    if(usOnder->getLastDistance() > 40) {
+      //Serial.println("Afgrond!");
+    }
+  
+    if(infraroodLinksVal == 1 && infraroodRechtsVal != 1){
+      motor.motorBStop();
+    }
+    else if(infraroodRechtsVal == 1 && infraroodLinksVal != 1){
+      motor.motorAStop();
+    }
+    else if(infraroodRechtsVal == 1 && infraroodLinksVal == 1){
       motor.motorStop();
     }
+    else{
+      motor.motorSpinForward();
+    }
+  }else
+  {
+    if (Serial.available() > 0) 
+    {
+       int x = Serial.read();
+       if(x == 1)
+       {
+        manualForward = true;
+        manualBack = false;
+        manualRight = false;
+        manualLeft = false;
+       }else if(x == 2)
+       {
+        manualBack = true;
+        manualForward = false;
+        manualRight = false;
+        manualLeft = false;
+       }
+       else if(x == 3)
+       {
+         manualRight = true;
+         manualLeft = false;
+         manualBack = false;
+         manualForward = false;
+       }
+       else if(x == 4)
+       {
+        manualLeft = true;
+        manualRight = false;
+        manualBack = false;
+        manualForward = false;
+       }else if(x == 5)
+       {
+        manualControl = false;
+       }
+       
+       if(manualForward)
+       {
+        motor.motorSpinForward();
+       }else if(manualBack)
+       {
+        motor.motorSpinBackward();
+       }else if(manualRight)
+       {
+        motor.motorSpinAForward();
+        motor.motorSpinBBackward();
+       }else if(manualLeft)
+       {
+        motor.motorSpinBForward();
+        motor.motorSpinABackward();
+       }
+    } 
+    
+    
   }
-
-  Serial.println("Sensor onder: " + String(usOnder->getLastDistance()));
-  if(usOnder->getLastDistance() > 40) {
-    Serial.println("Afgrond!");
-  }
-
-  if(infraroodLinksVal == 1 && infraroodRechtsVal != 1){
-    motor.motorBStop();
-  }
-  else if(infraroodRechtsVal == 1 && infraroodLinksVal != 1){
-    motor.motorAStop();
-  }
-  else if(infraroodRechtsVal == 1 && infraroodLinksVal == 1){
-    motor.motorStop();
-  }
-  else{
-    motor.motorSpinForward();
-  }
+  
 }
 
 void isrVoor() {
