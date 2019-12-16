@@ -19,11 +19,11 @@ UltrasonicSensor *usVoor, *usOnder;
 
 volatile unsigned long pulseTimeVoor;
 volatile unsigned long pulseTimeOnder;
-public boolean manualControl = false;
+/*public boolean manualControl = false;
 public boolean manualForward = false;
 public boolean manualRight = false;
 public boolean manualLeft = false;
-public boolean manualBack = false;
+public boolean manualBack = false;*/
 
 void setup() {
   Serial.begin(9600);
@@ -36,119 +36,117 @@ void setup() {
 
 void loop() {
 
-  if (Serial.available() > 0) 
-  {
-   int x = Serial.read();
-   if(x == 5)
-   {
+  /*if (Serial.available() > 0)
+    {
+    int x = Serial.read();
+    if(x == 5)
+    {
     manualControl = true;
     Serial.println("manual active");
-   }
-  }
+    }
+    }*/
 
-  if(!manualControl)
-  {
+//  if (!manualControl)
+  //{
     int infraroodLinksVal = digitalRead(infraroodLinks);
     int infraroodRechtsVal = digitalRead(infraroodRechts);
-  
-    //Serial.println("Sensor voor: " + (String)usVoor->getLastDistance());
-    if(usVoor->getLastDistance() < 40){
-      while(usVoor->getLastDistance() < 40){
+
+    Serial.println("Sensor voor: " + (String)usVoor->getLastDistance());
+    if (usVoor->getLastDistance() < 40) {
+      while (usVoor->getLastDistance() < 40) {
         motor.motorStop();
       }
     }
-  
-    //Serial.println("Sensor onder: " + String(usOnder->getLastDistance()));
-    if(usOnder->getLastDistance() > 40) {
-      //Serial.println("Afgrond!");
+
+    Serial.println("Sensor onder: " + String(usOnder->getLastDistance()));
+    if (usOnder->getLastDistance() > 40) {
+      Serial.println("Afgrond!");
     }
-  
-    if(infraroodLinksVal == 1 && infraroodRechtsVal != 1){
+
+    if (infraroodLinksVal == 1 && infraroodRechtsVal != 1) {
       motor.motorBStop();
     }
-    else if(infraroodRechtsVal == 1 && infraroodLinksVal != 1){
+    else if (infraroodRechtsVal == 1 && infraroodLinksVal != 1) {
       motor.motorAStop();
     }
-    else if(infraroodRechtsVal == 1 && infraroodLinksVal == 1){
+    else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
       motor.motorStop();
     }
-    else{
+    else {
       motor.motorSpinForward();
     }
-  }else
+ /* } else
   {
-    if (Serial.available() > 0) 
+    if (Serial.available() > 0)
     {
-       int x = Serial.read();
-       if(x == 1)
-       {
+      int x = Serial.read();
+      if (x == 1)
+      {
         manualForward = true;
         manualBack = false;
         manualRight = false;
         manualLeft = false;
-       }else if(x == 2)
-       {
+      } else if (x == 2)
+      {
         manualBack = true;
         manualForward = false;
         manualRight = false;
         manualLeft = false;
-       }
-       else if(x == 3)
-       {
-         manualRight = true;
-         manualLeft = false;
-         manualBack = false;
-         manualForward = false;
-       }
-       else if(x == 4)
-       {
+      }
+      else if (x == 3)
+      {
+        manualRight = true;
+        manualLeft = false;
+        manualBack = false;
+        manualForward = false;
+      }
+      else if (x == 4)
+      {
         manualLeft = true;
         manualRight = false;
         manualBack = false;
         manualForward = false;
-       }else if(x == 5)
-       {
+      } else if (x == 5)
+      {
         manualControl = false;
-       }
-       
-       if(manualForward)
-       {
+      }
+
+      if (manualForward)
+      {
         motor.motorSpinForward();
-       }else if(manualBack)
-       {
+      } else if (manualBack)
+      {
         motor.motorSpinBackward();
-       }else if(manualRight)
-       {
+      } else if (manualRight)
+      {
         motor.motorSpinAForward();
         motor.motorSpinBBackward();
-       }else if(manualLeft)
-       {
+      } else if (manualLeft)
+      {
         motor.motorSpinBForward();
         motor.motorSpinABackward();
-       }
-    } 
-    
-    
+      }
+    }*/
+
+
   }
-  
-}
 
 void isrVoor() {
   static unsigned long int start;
-  if(digitalRead(ultrasoonEchoVoor)) {
+  if (digitalRead(ultrasoonEchoVoor)) {
     start = micros();
   } else {
-    pulseTimeVoor = micros()-start;
+    pulseTimeVoor = micros() - start;
   }
   usOnder->pulse();
 }
 
 void isrOnder() {
   static unsigned long int start;
-  if(digitalRead(ultrasoonEchoOnder)) {
+  if (digitalRead(ultrasoonEchoOnder)) {
     start = micros();
   } else {
-    pulseTimeOnder = micros()-start;
+    pulseTimeOnder = micros() - start;
   }
   usVoor->pulse();
 }
