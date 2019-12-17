@@ -19,11 +19,11 @@ UltrasonicSensor *usVoor, *usOnder;
 
 volatile unsigned long pulseTimeVoor;
 volatile unsigned long pulseTimeOnder;
-public boolean manualControl = false;
-public boolean manualForward = false;
-public boolean manualRight = false;
-public boolean manualLeft = false;
-public boolean manualBack = false;
+boolean manualControl = false;
+boolean manualForward = false;
+boolean manualRight = false;
+boolean manualLeft = false;
+boolean manualBack = false;
 
 void setup() {
   Serial.begin(9600);
@@ -51,16 +51,16 @@ void loop() {
     int infraroodLinksVal = digitalRead(infraroodLinks);
     int infraroodRechtsVal = digitalRead(infraroodRechts);
   
-    //Serial.println("Sensor voor: " + (String)usVoor->getLastDistance());
+    Serial.println("Sensor voor: " + (String)usVoor->getLastDistance());
     if(usVoor->getLastDistance() < 40){
       while(usVoor->getLastDistance() < 40){
         motor.motorStop();
       }
     }
   
-    //Serial.println("Sensor onder: " + String(usOnder->getLastDistance()));
+    Serial.println("Sensor onder: " + String(usOnder->getLastDistance()));
     if(usOnder->getLastDistance() > 40) {
-      //Serial.println("Afgrond!");
+      Serial.println("Afgrond!");
     }
   
     if(infraroodLinksVal == 1 && infraroodRechtsVal != 1){
