@@ -44,7 +44,7 @@ void loop() {
   if (usVoorVal < 50 && millis() > prevMillis + 200 && (usVoorVal - usVoorPrev < 30 && usVoorVal - usVoorPrev > -30)) {
     int x = 0;
     while (x < 50) {
-      Serial.println("Ultrasoon Voor: " + (String)usVoorVal());
+      //Serial.println("Ultrasoon Voor: " + (String)usVoorVal());
       motor.motorSpinABackward();
       motor.motorSpinBForward();
       x++;
@@ -71,6 +71,7 @@ void loop() {
     }
     else {
       motor.motorSpinForward();
+      Serial.println("forward");
     }
   }
 
