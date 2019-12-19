@@ -14,6 +14,8 @@
 #include "motorController.cpp"
 #include "UltrasonicSensor.cpp"
 
+int u = 0;
+
 motorController motor(motorPin1A, motorPin1B, motorPin2A, motorPin2B);
 UltrasonicSensor *usVoor, *usOnder;
 
@@ -21,9 +23,6 @@ volatile unsigned long pulseTimeVoor;
 volatile unsigned long pulseTimeOnder;
 
 unsigned long int prevMillis = millis();
-
-int usVoorPrev = 0;
-int usOnderPrev = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -34,28 +33,36 @@ void setup() {
   usVoor->pulse();
 }
 
-void loop() {
+void loop() {  
+
+  if(u == 0){
+    Serial.println("pulse");
+    usVoor->pulse();
+    u = 1;
+  }
+  else{
+    usOnder->pulse();
+    u = 0;
+  }
+
   int infraroodLinksVal = digitalRead(infraroodLinks);
   int infraroodRechtsVal = digitalRead(infraroodRechts);
 
-  int usVoorVal = usVoor->getLastDistance();
-  int usOnderVal = usOnder->getLastDistance();
-
-  if (usVoorVal < 50 && millis() > prevMillis + 200 && (usVoorVal - usVoorPrev < 30 && usVoorVal - usVoorPrev > -30)) {
+  if (usVoor->getLastDistance() < 50 && millis() > prevMillis + 200) {
     int x = 0;
-    while (x < 50) {
-      Serial.println("Ultrasoon Voor: " + (String)usVoorVal());
+    /*while (x < 50 usVoor->getLastDistance() < 50) {
+      motor.motorStop();
       motor.motorSpinABackward();
       motor.motorSpinBForward();
       x++;
-    }
+    }*/
     prevMillis = millis();
   }
-  else if (usOnderVal > 100 && millis() > prevMillis + 200 && (usOnderVal - usOnderPrev < 30 && usOnderVal - usOnderPrev > -30)) {
-    while (usOnderVal > 100 ) {
+  else if (usOnder->getLastDistance() > 100 && millis() > prevMillis + 200) {
+    /*while (usOnder->getLastDistance() > 100) {
       motor.motorStop();
       prevMillis = millis();
-    }
+    }*/
   }
   else {
     if (infraroodLinksVal == 1 && infraroodRechtsVal != 1) {
@@ -67,16 +74,15 @@ void loop() {
       motor.motorSpinBForward();
     }
     else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
-      motor.motorStop();
+      for(int i = 0; i<150; i++){
+        motor.motorSpinABackward();
+        motor.motorSpinBBackward();
+      }
     }
     else {
       motor.motorSpinForward();
     }
   }
-
-  //Zet ultrasoon waarde in de variable usOnderPrev zodat we de volgende loop rotatie de vorige waarde kunnen lezen.
-  usOnderPrev = usOnderVal;
-  usVoorPrev = usVoorVal;
 }
 
 void isrVoor() {
@@ -86,7 +92,7 @@ void isrVoor() {
   } else {
     pulseTimeVoor = micros() - start;
   }
-  usOnder->pulse();
+//  usOnder->pulse();
 }
 
 void isrOnder() {
@@ -96,5 +102,5 @@ void isrOnder() {
   } else {
     pulseTimeOnder = micros() - start;
   }
-  usVoor->pulse();
+//  usVoor->pulse();
 }
