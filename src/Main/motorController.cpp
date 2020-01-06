@@ -33,7 +33,7 @@ class motorController {
         digitalWrite(motor1B, LOW);
       }
       else{
-        return null;
+        return 0;
       }
     }
 
@@ -51,7 +51,7 @@ class motorController {
         digitalWrite(motor2B, LOW);
       }
       else{
-        return null;
+        return 0;
       }
     }
 };

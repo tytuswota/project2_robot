@@ -36,7 +36,7 @@ void setup() {
 void loop() {  
 
   if(u == 0){
-    Serial.println("pulse");
+    //Serial.println("pulse");
     usVoor->pulse();
     u = 1;
   }
