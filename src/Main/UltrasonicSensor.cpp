@@ -3,32 +3,27 @@
 #include <Arduino.h>
 
 class UltrasonicSensor {
-    int trigPin, echoPin;
-    unsigned long *pulseTime;
-
   public:
+  int trig, echo;
 
-    UltrasonicSensor(int trigPin, int echoPin, unsigned long *pulseTime, void(*isr)(void)) {
-      if (!(echoPin == 2 || echoPin == 3)) {
-        // not an interrupt pin in this case, error handling?
-      }
-      attachInterrupt(digitalPinToInterrupt(echoPin), isr, CHANGE);
-      pinMode(trigPin, OUTPUT);
-      pinMode(echoPin, INPUT);
-      this->trigPin = trigPin;
-      this->echoPin = echoPin;
-      this->pulseTime = pulseTime;
+  UltrasonicSensor() {}
+  
+  UltrasonicSensor(const int trig, const int echo, void(*isr)(void)) {
+    if(!(echo == 2 || echo == 3)) {
+      Serial.println("UltrasonicSensor object made with non-interrupt pin");
     }
+    this->trig = trig;
+    this->echo = echo;
+    pinMode(trig, OUTPUT);
+    pinMode(echo, INPUT);
+    attachInterrupt(digitalPinToInterrupt(echo), isr, CHANGE);
+  }
 
-    void pulse() {
-      digitalWrite(trigPin, LOW);
-      delayMicroseconds(2);
-      digitalWrite(trigPin, HIGH);
-      delayMicroseconds(10);
-      digitalWrite(trigPin, LOW);
-    }
-
-    int getLastDistance() {
-      return ((*pulseTime >> 2) / 2.9);
-    }
+  void pulse() {
+    digitalWrite(trig, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trig, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trig, LOW);
+  }
 };
