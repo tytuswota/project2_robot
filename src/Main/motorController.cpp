@@ -19,48 +19,39 @@ class motorController {
       pinMode(motor2B, OUTPUT);
     }
 
-    void motorSpinAForward() {
-      digitalWrite(motor1A, HIGH);
-      digitalWrite(motor1B, LOW);
-    }
-    void motorSpinBForward() {
-      digitalWrite(motor2A, HIGH);
-      digitalWrite(motor2B, LOW);
-    }
-    void motorSpinABackward() {
-      digitalWrite(motor1A, LOW);
-      digitalWrite(motor1B, HIGH);
-    }
-    void motorSpinBBackward() {
-      digitalWrite(motor2A, LOW);
-      digitalWrite(motor2B, HIGH);
-    }
-
-    void motorSpinForward() {
-      digitalWrite(motor1A, HIGH);
-      digitalWrite(motor2A, HIGH);
-      digitalWrite(motor1B, LOW);
-      digitalWrite(motor2B, LOW);
-    }
-    void motorSpinBackward() {
-      digitalWrite(motor1A, LOW);
-      digitalWrite(motor2A, LOW);
-      digitalWrite(motor1B, HIGH);
-      digitalWrite(motor2B, HIGH);
+    void motorA(String command){
+      if(command == "forward"){
+        digitalWrite(motor1A, HIGH);
+        digitalWrite(motor1B, LOW);
+      }
+      else if(command == "backward"){
+        digitalWrite(motor1A, LOW);
+        digitalWrite(motor1B, HIGH);
+      }
+      else if(command == "stop"){
+        digitalWrite(motor1A, LOW);
+        digitalWrite(motor1B, LOW);
+      }
+      else{
+        return null;
+      }
     }
 
-    void motorAStop() {
-      digitalWrite(motor1A, LOW);
-      digitalWrite(motor1B, LOW);
-    }
-    void motorBStop() {
-      digitalWrite(motor2A, LOW);
-      digitalWrite(motor2B, LOW);
-    }
-    void motorStop() {
-      digitalWrite(motor1A, LOW);
-      digitalWrite(motor1B, LOW);
-      digitalWrite(motor2A, LOW);
-      digitalWrite(motor2B, LOW);
+    void motorB(String command){
+      if(command == "forward"){
+        digitalWrite(motor2A, HIGH);
+        digitalWrite(motor2B, LOW);
+      }
+      else if(command == "backward"){
+        digitalWrite(motor2A, LOW);
+        digitalWrite(motor2B, HIGH);
+      }
+      else if(command == "stop"){
+        digitalWrite(motor2A, LOW);
+        digitalWrite(motor2B, LOW);
+      }
+      else{
+        return null;
+      }
     }
 };
