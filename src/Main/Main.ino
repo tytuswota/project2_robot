@@ -8,8 +8,8 @@
 
 #define motorPin1A 9
 #define motorPin1B 10
-#define motorPin2A 5
-#define motorPin2B 4
+#define motorPin2A 4
+#define motorPin2B 5
 
 #include "motorController.cpp"
 #include "UltrasonicSensor.cpp"

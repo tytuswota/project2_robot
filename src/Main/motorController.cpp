@@ -21,24 +21,6 @@ class motorController {
 
     void motorA(String command){
       if(command == "forward"){
-        digitalWrite(motor1A, HIGH);
-        digitalWrite(motor1B, LOW);
-      }
-      else if(command == "backward"){
-        digitalWrite(motor1A, LOW);
-        digitalWrite(motor1B, HIGH);
-      }
-      else if(command == "stop"){
-        digitalWrite(motor1A, LOW);
-        digitalWrite(motor1B, LOW);
-      }
-      else{
-        return null;
-      }
-    }
-
-    void motorB(String command){
-      if(command == "forward"){
         digitalWrite(motor2A, HIGH);
         digitalWrite(motor2B, LOW);
       }
@@ -51,7 +33,25 @@ class motorController {
         digitalWrite(motor2B, LOW);
       }
       else{
-        return null;
+        return 0;
+      }
+    }
+
+    void motorB(String command){
+      if(command == "forward"){
+        digitalWrite(motor1A, HIGH);
+        digitalWrite(motor1B, LOW);
+      }
+      else if(command == "backward"){
+        digitalWrite(motor1A, LOW);
+        digitalWrite(motor1B, HIGH);
+      }
+      else if(command == "stop"){
+        digitalWrite(motor1A, LOW);
+        digitalWrite(motor1B, LOW);
+      }
+      else{
+        return 0;
       }
     }
 };
