@@ -66,21 +66,22 @@ void loop() {
   }
   else {
     if (infraroodLinksVal == 1 && infraroodRechtsVal != 1) {
-      motor.motorSpinBBackward();
-      motor.motorSpinAForward();
+      motor.motorB("backward");
+      motor.motorA("forward");
     }
     else if (infraroodRechtsVal == 1 && infraroodLinksVal != 1) {
-      motor.motorSpinABackward();
-      motor.motorSpinBForward();
+      motor.motorA("backward");
+      motor.motorB("forward");
     }
     else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
       for(int i = 0; i<150; i++){
-        motor.motorSpinABackward();
-        motor.motorSpinBBackward();
+        motor.motorA("backward");
+        motor.motorB("backward");
       }
     }
     else {
-      motor.motorSpinForward();
+      motor.motorA("forward");
+      motor.motorB("forward");
     }
   }
 }
