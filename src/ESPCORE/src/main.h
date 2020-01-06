@@ -10,6 +10,11 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
 <script>
   $(document).ready(function(){
     //alert("test");
+    $(".manual").click(function(){
+      $.post( "/controller", {direction:"man"})
+        .done(function(data){
+          console.log("1");
+      });
 
     $(".forward").click(function(){
       $.post( "/controller", {direction:"forward"})
@@ -50,6 +55,7 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
   
 </HEAD>
 <BODY>
+  <button class="manual">manual</button><br/>
   <button class="forward">forward</button><br/>
   <button class="back">back</button><br/>
   <button class="right">right</button><br/>

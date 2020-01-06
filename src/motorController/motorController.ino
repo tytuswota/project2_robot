@@ -1,7 +1,7 @@
-#define motorPin1A 2
-#define motorPin1B 3
-#define motorPin2A 4
-#define motorPin2B 5
+#define motorPin1A 3
+#define motorPin1B 2
+#define motorPin2A 5
+#define motorPin2B 4
 
 void setup() {
   pinMode(motorPin1A, OUTPUT);
@@ -11,7 +11,7 @@ void setup() {
 }
 
 void loop() {
-  motorSpinAForward();
+  motorSpinABackward();
   motorSpinBForward();
 }
 

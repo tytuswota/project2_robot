@@ -2,47 +2,47 @@ int knop = 0;
 int timer = 0;
 
 void setup() {
-  pinMode(7, OUTPUT);
-  pinMode(8, OUTPUT);
-  pinMode(9, OUTPUT);
-  pinMode(2, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(2), knopSwitch, FALLING);
+  pinMode(6, OUTPUT);
+  pinMode(A1, OUTPUT);
+  pinMode(A2, OUTPUT);
+  pinMode(5, INPUT_PULLUP);
+ // attachInterrupt(digitalPinToInterrupt(5), knopSwitch, FALLING);
 }
 
-void knopSwitch() {
+/*void knopSwitch() {
   knop = !knop;
-}
+}*/
 
 void loop() {
   alarm();
 }
 
 void alarm(){
-  if (knop == 1) {
+  //if (knop == 0) {
     for (int i = 0; i < 4; i++) {
-      tone(7, 1000);
-      digitalWrite(8, 1);
-      digitalWrite(9, 0);
+      tone(6, 1000);
+      analogWrite(A1, 255);
+      analogWrite(A2, 0);
       delay(600);
-      tone(7, 500);
-      digitalWrite(8, 0);
-      digitalWrite(9, 1);
+      tone(6, 500);
+      analogWrite(A1, 0);
+      analogWrite(A2, 255);
       delay(600);
     }
 
     for (int i = 0; i < 10; i++) {
-      tone(7, 1500);
-      digitalWrite(8, 1);
-      digitalWrite(9, 0);
+      tone(6, 1500);
+      analogWrite(A1, 255);
+      analogWrite(A2, 0);
       delay(50);
-      tone(7, 500);
-      digitalWrite(8, 0);
-      digitalWrite(9, 1);
+      tone(6, 500);
+      analogWrite(A1, 0);
+      analogWrite(A2, 255);
       delay(50);
     }
 
-    noTone(7);
-    digitalWrite(8, 0);
-    digitalWrite(9, 0);
-  }
+    noTone(6);
+    analogWrite(A1, 0);
+    analogWrite(A2, 0);
+  //}
 }

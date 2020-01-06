@@ -6,6 +6,13 @@
 volatile unsigned long pulseTimeFront;
 UltrasonicSensor *usFront;
 
+int readings[5];
+byte readingpos;
+
+int cmp (const void * a, const void * b) {
+   return ( *(int*)a - *(int*)b );
+}
+
 void isrFront() {
   static unsigned long int start;
   if(digitalRead(ECHO_FRONT)) {
@@ -23,5 +30,10 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(usFront->getLastDistance());
+  readings[readingpos++] = usFront->getLastDistance();
+  if(readingpos == 4) {
+    readingpos = 0;
+    qsort(readings, 4, sizeof(int), cmp);
+    if(readings[2] < 50) Serial.println("object detected");
+  }
 }
