@@ -1,39 +1,59 @@
 #include "UltrasonicSensor.cpp"
 
-#define TRIG_FRONT 4
-#define ECHO_FRONT 2
-
-volatile unsigned long pulseTimeFront;
-UltrasonicSensor *usFront;
-
-int readings[5];
-byte readingpos;
-
-int cmp (const void * a, const void * b) {
-   return ( *(int*)a - *(int*)b );
-}
+long pulseTimeFront, pulseTimeUnder;
+Ultrasonic usFront, usUnder;
 
 void isrFront() {
   static unsigned long int start;
-  if(digitalRead(ECHO_FRONT)) {
+  if(digitalRead(usFront.echo)) {
     start = micros();
   } else {
     pulseTimeFront = micros()-start;
   }
-  usFront->pulse();
+  usUnder.pulse();
+}
+
+void isrUnder() {
+  static unsigned long int start;
+  if(digitalRead(usUnder.echo)) {
+    start = micros();
+  } else {
+    pulseTimeUnder = micros()-start;
+  }
+}
+
+ISR(TIMER1_COMPA_vect) {
+  usFront.pulse();
+}
+
+void setTimerInterrupt() {
+  cli();
+
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1 = 0;
+  
+  OCR1A = 1562; // 16 000 000 / (prescaler * Hz) - 1
+  
+  TCCR1B |= (1 << WGM12);
+  TCCR1B |= (1 << CS12) | (1 << CS10); // prescaler = 1024
+  TIMSK1 |= (1 << OCIE1A);
+
+  sei();
+}
+
+long timeToMillimeters(long pulseTime) {
+  return ((pulseTime >> 1) / 2.9);
 }
 
 void setup() {
+  usFront = Ultrasonic(4, 2, isrFront);
+  usUnder = Ultrasonic(5, 3, isrUnder);
+  
   Serial.begin(9600);
-  usFront = new UltrasonicSensor(TRIG_FRONT, ECHO_FRONT, &pulseTimeFront, isrFront);
-  usFront->pulse();
+  setTimerInterrupt();
 }
 
 void loop() {
-  readings[readingpos++] = usFront->getLastDistance();
-  if(readingpos == 4) {
-    readingpos = 0;
-    qsort(readings, 4, sizeof(int), cmp);
-    if(readings[2] < 50) Serial.println("object detected");
-  }
+  Serial.println("front: " + (String)timeToMillimeters(pulseTimeFront) + " under: " + (String)timeToMillimeters(pulseTimeUnder));
 }
