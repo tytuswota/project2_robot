@@ -9,50 +9,39 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
   crossorigin="anonymous"></script>
 <script>
   $(document).ready(function(){
-    //alert("test");
     $(".manual").click(function(){
       $.post( "/controller", {direction:"man"})
         .done(function(data){
           console.log("1");
-      });
-
+          });
+    });
     $(".forward").click(function(){
       $.post( "/controller", {direction:"forward"})
         .done(function(data){
           console.log("1");
-      });
-
-    });  
-
+          });
+    });
     $(".back").click(function(){
       $.post( "/controller", {direction:"back"})
         .done(function(data){
           console.log("1");
-      });
+          });
     });
-    
     $(".right").click(function(){
       $.post( "/controller", {direction:"right"})
         .done(function(data){
           console.log("1");
-      });
+          });
     });
-
     $(".left").click(function(){
       $.post( "/controller", {direction:"left"})
         .done(function(data){
           console.log("1");
-      });
+          });
     });
-    
   });
 
-</script>
-
-<style>
-
-</style>
-  
+</script>  
 </HEAD>
 <BODY>
   <button class="manual">manual</button><br/>

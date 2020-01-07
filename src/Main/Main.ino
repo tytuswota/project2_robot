@@ -14,6 +14,8 @@
 #include "motorController.cpp"
 #include "UltrasonicSensor.cpp"
 
+int ESPRESPONSE = 0;
+int MANCONTROL = 0;
 long timeToMillimeters(long pulseTime) {
   return ((pulseTime >> 1) / 2.9);
 }
@@ -76,21 +78,68 @@ void setup() {
 
 void loop() {
   
+  if(Serial.available())
+  {
+    ESPRESPONSE = Serial.read();
+  }
 
+  if(ESPRESPONSE > 0)
+  {
+    if(ESPRESPONSE == 5)
+    {
+      if(MANCONTROL)
+      {
+        interrupts();
+        MANCONTROL = 0;
+      }else
+      {
+        noInterrupts();
+        MANCONTROL = 1;  
+      }
+    }
+  }
+  while(MANCONTROL)
+  {
+    if(Serial.available())
+    {
+      ESPRESPONSE = Serial.read();
+    }
+    switch(ESPRESPONSE)
+    {
+      case 1:
+        motor.motorA("forward");
+        motor.motorB("forward");
+      break;
+      case 2:
+        motor.motorB("backward");
+        motor.motorA("forward");
+      break;
+      case 3:
+        motor.motorA("forward");
+        motor.motorB("backward");
+      break;
+      case 4:
+        motor.motorA("backward");
+        motor.motorB("backward");
+      break;
+    }
+  }
+  //mancontrol
+  
+  
   int infraroodLinksVal = digitalRead(infraroodLinks);
   int infraroodRechtsVal = digitalRead(infraroodRechts);
 
   if (timeToMillimeters(pulseTimeVoor) < 50 && millis() > prevMillis + 200) {
     int x = 0;
-    while (x < 50) {
+    //while (x < 50) {
     /*while (x < 50 usVoor->getLastDistance() < 50) {
       motor.motorStop();
       motor.motorSpinABackward();
       motor.motorSpinBForward();
       x++;
     }*/
-    prevMillis = millis();
-  }
+    //prevMillis = millis();
   }
   else if (timeToMillimeters(pulseTimeOnder) > 100 && millis() > prevMillis + 200) {
     /*while (usOnder->getLastDistance() > 100) {
