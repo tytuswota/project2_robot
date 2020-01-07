@@ -11,6 +11,9 @@
 #define motorPin2A 4
 #define motorPin2B 5
 
+#define ultrasoonVoorAfstand 150
+#define ultrasoonOnderAfstand 300
+
 #include "motorController.cpp"
 #include "UltrasonicSensor.cpp"
 
@@ -64,8 +67,6 @@ void isrOnder() {
 }
 
 motorController motor(motorPin1A, motorPin1B, motorPin2A, motorPin2B);
-
-unsigned long int prevMillis = millis();
 
 void setup() {
   Serial.begin(9600);
@@ -130,6 +131,7 @@ void loop() {
   int infraroodLinksVal = digitalRead(infraroodLinks);
   int infraroodRechtsVal = digitalRead(infraroodRechts);
 
+<<<<<<< HEAD
   if (timeToMillimeters(pulseTimeVoor) < 50 && millis() > prevMillis + 200) {
     int x = 0;
     //while (x < 50) {
@@ -153,19 +155,34 @@ void loop() {
       motor.motorA("forward");
     }
     else if (infraroodRechtsVal == 1 && infraroodLinksVal != 1) {
+=======
+  
+  if(timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
+    while(timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
+>>>>>>> master
       motor.motorA("backward");
       motor.motorB("forward");
+      delay(100);
     }
-    else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
-      for(int i = 0; i<150; i++){
-        motor.motorA("backward");
-        motor.motorB("backward");
-      }
+    motor.motorA("forward");
+  }
+  while (timeToMillimeters(pulseTimeOnder) > ultrasoonOnderAfstand) {
+    motor.motorA("stop");
+    motor.motorB("stop");
+  }
+  if (infraroodLinksVal == 1 && infraroodRechtsVal != 1) {
+    motor.motorB("backward");
+    motor.motorA("forward");
+  } else if (infraroodRechtsVal == 1 && infraroodLinksVal != 1) {
+    motor.motorA("backward");
+    motor.motorB("forward");
+  } else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
+    for(int i = 0; i<150; i++){
+      motor.motorA("backward");
+      motor.motorB("backward");
     }
-    else 
-    {
-      motor.motorA("forward");
-      motor.motorB("forward");
-    }
+  } else {
+    motor.motorA("forward");
+    motor.motorB("forward");
   }
 }
