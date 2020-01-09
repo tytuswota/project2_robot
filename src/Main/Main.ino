@@ -18,7 +18,9 @@
 #include "UltrasonicSensor.cpp"
 
 int ESPRESPONSE = 0;
-int MANCONTROL = 0;
+int serialBuffer = 0;
+boolean MANCONTROL = false;
+
 long timeToMillimeters(long pulseTime) {
   return ((pulseTime >> 1) / 2.9);
 }
@@ -33,9 +35,9 @@ void startTimerInterruptLoop() {
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1 = 0;
-  
+
   OCR1A = 1562; // 16 000 000 / (prescaler * Hz) - 1
-  
+
   TCCR1B |= (1 << WGM12);
   TCCR1B |= (1 << CS12) | (1 << CS10); // prescaler = 1024
   TIMSK1 |= (1 << OCIE1A);
@@ -49,20 +51,20 @@ ISR(TIMER1_COMPA_vect) {
 
 void isrVoor() {
   static unsigned long start;
-  if(digitalRead(usVoor.echo)) {
+  if (digitalRead(usVoor.echo)) {
     start = micros();
   } else {
-    pulseTimeVoor = micros()-start;
+    pulseTimeVoor = micros() - start;
   }
   usOnder.pulse();
 }
 
 void isrOnder() {
   static unsigned long start;
-  if(digitalRead(usOnder.echo)) {
+  if (digitalRead(usOnder.echo)) {
     start = micros();
   } else {
-    pulseTimeOnder = micros()-start;
+    pulseTimeOnder = micros() - start;
   }
 }
 
@@ -77,86 +79,99 @@ void setup() {
   startTimerInterruptLoop();
 }
 
-void loop() {
-  
-  if(Serial.available())
-  {
-    ESPRESPONSE = Serial.read();
-  }
+void getEspResponse()
+{
+  int SerialBuffer = 0;
 
-  if(ESPRESPONSE > 0)
+  if (Serial.available() > 0)
   {
-    if(ESPRESPONSE == 5)
+    //ESPRESPONSE = Serial.parseInt();
+    ESPRESPONSE = Serial.read();
+    //Serial.println(ESPRESPONSE);
+    if (ESPRESPONSE == 5)
     {
-      if(MANCONTROL)
+      if (MANCONTROL)
       {
-        interrupts();
-        MANCONTROL = 0;
-      }else
+        MANCONTROL = false;
+      }
+      else
       {
-        noInterrupts();
-        MANCONTROL = 1;  
+        MANCONTROL = true;
       }
     }
   }
-  while(MANCONTROL)
+}
+
+void loop() {
+  getEspResponse();
+
+  //Serial.println("in the main loop");
+  while (MANCONTROL)
   {
-    if(Serial.available())
-    {
-      ESPRESPONSE = Serial.read();
-    }
-    switch(ESPRESPONSE)
+    //Serial.println("the man control loop");
+    getEspResponse();
+    if (!MANCONTROL) break;
+    switch (ESPRESPONSE)
     {
       case 1:
         motor.motorA("forward");
         motor.motorB("forward");
-      break;
-      case 2:
+        Serial.println("Forward");
+        break;
+      case 4:
         motor.motorB("backward");
         motor.motorA("forward");
-      break;
+        Serial.println("Left");
+        break;
       case 3:
         motor.motorA("forward");
         motor.motorB("backward");
-      break;
-      case 4:
+        Serial.println("Right");
+        break;
+      case 2:
         motor.motorA("backward");
         motor.motorB("backward");
-      break;
+        Serial.println("Back");
+        break;
     }
   }
-  //mancontrol
-  
-  
-  int infraroodLinksVal = digitalRead(infraroodLinks);
-  int infraroodRechtsVal = digitalRead(infraroodRechts);
 
-  
-  if(timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
-    while(timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
+  if (!MANCONTROL)
+  {
+    int infraroodLinksVal = digitalRead(infraroodLinks);
+    int infraroodRechtsVal = digitalRead(infraroodRechts);
+
+    if (timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
+      while (timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
+        motor.motorA("backward");
+        motor.motorB("forward");
+        delay(100);
+        getEspResponse();
+        if (MANCONTROL) break;
+      }
+      motor.motorA("forward");
+    }
+    while (timeToMillimeters(pulseTimeOnder) > ultrasoonOnderAfstand) {
+      motor.motorA("stop");
+      motor.motorB("stop");
+      getEspResponse();
+      if (MANCONTROL) break;
+    }
+    if (infraroodLinksVal == 1 && infraroodRechtsVal != 1) {
+      motor.motorB("backward");
+      motor.motorA("forward");
+    } else if (infraroodRechtsVal == 1 && infraroodLinksVal != 1) {
       motor.motorA("backward");
       motor.motorB("forward");
-      delay(100);
+    } else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
+      for (int i = 0; i < 150; i++) {
+        motor.motorA("backward");
+        motor.motorB("backward");
+      }
+    } else {
+      motor.motorA("forward");
+      motor.motorB("forward");
     }
-    motor.motorA("forward");
   }
-  while (timeToMillimeters(pulseTimeOnder) > ultrasoonOnderAfstand) {
-    motor.motorA("stop");
-    motor.motorB("stop");
-  }
-  if (infraroodLinksVal == 1 && infraroodRechtsVal != 1) {
-    motor.motorB("backward");
-    motor.motorA("forward");
-  } else if (infraroodRechtsVal == 1 && infraroodLinksVal != 1) {
-    motor.motorA("backward");
-    motor.motorB("forward");
-  } else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
-    for(int i = 0; i<150; i++){
-      motor.motorA("backward");
-      motor.motorB("backward");
-    }
-  } else {
-    motor.motorA("forward");
-    motor.motorB("forward");
-  }
+
 }
