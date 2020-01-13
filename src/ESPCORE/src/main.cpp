@@ -9,11 +9,11 @@ MDNSResponder mdns;
 
  
 ESP8266WebServer server(80);
-const char* ssid     = "Tesla IoT";      //wifi name
-const char* password = "fsL6HgjN";  //wifi password
+//const char* ssid     = "Tesla IoT";      //wifi name
+//const char* password = "fsL6HgjN";  //wifi password
 
-//const char* ssid     = "Martaton";      //wifi name
-//const char* password = "Nella2018";  //wifi password
+const char* ssid     = "Martaton";      //wifi name
+const char* password = "Nella2018";  //wifi password
 //FireData firebaseData;
 
 void handleRoot() 
