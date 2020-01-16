@@ -85,9 +85,7 @@ void getEspResponse()
 
   if (Serial.available() > 0)
   {
-    //ESPRESPONSE = Serial.parseInt();
     ESPRESPONSE = Serial.read();
-    //Serial.println(ESPRESPONSE);
     if (ESPRESPONSE == 5)
     {
       if (MANCONTROL)
@@ -102,13 +100,37 @@ void getEspResponse()
   }
 }
 
+void specialManouver() {
+  boolean goBack = false;
+  for (int i = 0; i < 150; i++) {
+    motor.motorA("backward");
+    motor.motorB("forward");
+  }
+  for (int i = 0; i < 50; i++) {
+    motor.motorA("forward");
+    motor.motorB("forward");
+    if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
+      goBack = true;
+      break;
+    }
+  }
+  if (goBack) {
+    for (int i = 0; i < 100; i++) {
+      motor.motorA("backward");
+      motor.motorA("backward");
+    }
+  }
+  for (int i = 0; i < 150; i++) {
+    motor.motorA("forward");
+    motor.motorB("backward");
+  }
+
+}
+
 void loop() {
   getEspResponse();
-
-  //Serial.println("in the main loop");
   while (MANCONTROL)
   {
-    //Serial.println("the man control loop");
     getEspResponse();
     if (!MANCONTROL) break;
     switch (ESPRESPONSE)
@@ -116,22 +138,18 @@ void loop() {
       case 1:
         motor.motorA("forward");
         motor.motorB("forward");
-        //Serial.println("Forward");
         break;
       case 4:
         motor.motorB("backward");
         motor.motorA("forward");
-        //Serial.println("Left");
         break;
       case 3:
         motor.motorA("forward");
         motor.motorB("backward");
-        //Serial.println("Right");
         break;
       case 2:
         motor.motorA("backward");
         motor.motorB("backward");
-        //Serial.println("Back");
         break;
     }
   }
@@ -142,6 +160,7 @@ void loop() {
     int infraroodRechtsVal = digitalRead(infraroodRechts);
 
     if (timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
+      //specialManouver();
       while (timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
         motor.motorA("backward");
         motor.motorB("forward");
