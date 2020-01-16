@@ -13,23 +13,23 @@
 #include "motorController.cpp"
 #include "UltrasonicSensor.cpp"
 
-#define irLeft 8
-#define irRight 7
+#define irLeft 7
+#define irRight 8
 
 #define usTrigFront 11
 #define usEchoFront 2
 #define usTrigUnder 12
 #define usEchoUnder 3
 
-#define motorPin1A 9
-#define motorPin1B 10
-#define motorPin2A 4
-#define motorPin2B 5
+#define motorPin1A 10
+#define motorPin1B 9
+#define motorPin2A 5
+#define motorPin2B 4
 
 #define usFrontDistance 150
 #define usUnderDistance 300
 
-bool debug = false;
+bool debug = true;
 
 int espResponse = 0;
 int serialBuffer = 0;
@@ -64,6 +64,7 @@ void loop() {
   getEspResponse();
 
   if (manControl) {
+    if (debug) Serial.println("ManControl");
     switch (espResponse) {
       case 1:
         motor.motorA("forward");
@@ -91,6 +92,7 @@ void loop() {
     }
   }
   else {
+    if (debug) Serial.println("Normal mode");
     int irLeftVal = digitalRead(irLeft);
     int irRightVal = digitalRead(irRight);
 
@@ -104,9 +106,8 @@ void loop() {
       while (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
         motor.motorA("backward");
         motor.motorB("forward");
-        delay(100);
         getEspResponse();
-        if (manControl) break;
+        if (debug) Serial.println("US Front : " + (String)timeToMillimeters(pulseTimeFront));
       }
       motor.motorA("forward");
     }
@@ -115,18 +116,18 @@ void loop() {
         motor.motorA("stop");
         motor.motorB("stop");
         getEspResponse();
-        if (manControl) break;
+        if (debug) Serial.println("US Under : " + (String)timeToMillimeters(pulseTimeUnder));
       }
     }
     else {
       if (irLeftVal == 1 && irRightVal != 1) {
-        motor.motorB("backward");
+        motor.motorB("stop");
         motor.motorA("forward");
       } else if (irRightVal == 1 && irLeftVal != 1) {
-        motor.motorA("backward");
+        motor.motorA("stop");
         motor.motorB("forward");
       } else if (irLeftVal == 1 && irRightVal == 1) {
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 500; i++) {
           motor.motorA("backward");
           motor.motorB("backward");
         }
