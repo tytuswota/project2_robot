@@ -1,37 +1,152 @@
-#define infraroodLinks 8
-#define infraroodRechts 7
+/*
+   Project 2 - RescueBots
 
-#define ultrasoonTrigVoor 11
-#define ultrasoonEchoVoor 2
-#define ultrasoonTrigOnder 12
-#define ultrasoonEchoOnder 3
+   Namen: Don Luyendijk   - 0970101
+          Tymek Pisko     - 0986216
+          Gillbert Resida - 0990026
+          Charlie de Raaf - 0987084
+
+   Klas:  TI1E - Groep 4
+*/
+
+/*------Initialisatie------*/
+#include "motorController.cpp"
+#include "UltrasonicSensor.cpp"
+
+#define irLeft 8
+#define irRight 7
+
+#define usTrigFront 11
+#define usEchoFront 2
+#define usTrigUnder 12
+#define usEchoUnder 3
 
 #define motorPin1A 9
 #define motorPin1B 10
 #define motorPin2A 4
 #define motorPin2B 5
 
-#define ultrasoonVoorAfstand 150
-#define ultrasoonOnderAfstand 300
+#define usFrontDistance 150
+#define usUnderDistance 300
 
-#include "motorController.cpp"
-#include "UltrasonicSensor.cpp"
+bool debug = false;
 
-int ESPRESPONSE = 0;
+int espResponse = 0;
 int serialBuffer = 0;
-boolean MANCONTROL = false;
+boolean manControl = false;
 
+UltrasonicSensor usFront, usUnder;
+volatile unsigned long pulseTimeFront;
+volatile unsigned long pulseTimeUnder;
+
+long timeToMillimeters(long pulseTime);
+void startTimerInterruptLoop();
+ISR(TIMER1_COMPA_vect);
+void isrFront();
+void isrUnder();
+void getEspResponse();
+
+motorController motor(motorPin1A, motorPin1B, motorPin2A, motorPin2B);
+/*---------------------*/
+
+
+/*------Main Code------*/
+void setup() {
+  Serial.begin(9600);
+  pinMode(irLeft, INPUT_PULLUP);
+  pinMode(irRight, INPUT_PULLUP);
+  usUnder = UltrasonicSensor(usTrigUnder, usEchoUnder, isrUnder);
+  usFront = UltrasonicSensor(usTrigFront, usEchoFront, isrFront);
+  startTimerInterruptLoop();
+}
+
+void loop() {
+  getEspResponse();
+
+  if (manControl) {
+    switch (espResponse) {
+      case 1:
+        motor.motorA("forward");
+        motor.motorB("forward");
+        if (debug) Serial.println("Forward");
+        break;
+      case 2:
+        motor.motorA("backward");
+        motor.motorB("backward");
+        if (debug) Serial.println("Back");
+        break;
+      case 3:
+        motor.motorA("forward");
+        motor.motorB("backward");
+        if (debug) Serial.println("Right");
+        break;
+      case 4:
+        motor.motorB("backward");
+        motor.motorA("forward");
+        if (debug) Serial.println("Left");
+        break;
+      case 5:
+        manControl = !manControl;
+        break;
+    }
+  }
+  else {
+    int irLeftVal = digitalRead(irLeft);
+    int irRightVal = digitalRead(irRight);
+
+    if (debug) Serial.println("IR Left : " + (String) irLeftVal);
+    if (debug) Serial.println("IR Right : " + (String) irRightVal);
+
+    if (debug) Serial.println("US Front : " + (String) timeToMillimeters(pulseTimeFront));
+    if (debug) Serial.println("US Under : " + (String) timeToMillimeters(pulseTimeUnder));
+
+    if (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
+      while (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
+        motor.motorA("backward");
+        motor.motorB("forward");
+        delay(100);
+        getEspResponse();
+        if (manControl) break;
+      }
+      motor.motorA("forward");
+    }
+    else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
+      while (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
+        motor.motorA("stop");
+        motor.motorB("stop");
+        getEspResponse();
+        if (manControl) break;
+      }
+    }
+    else {
+      if (irLeftVal == 1 && irRightVal != 1) {
+        motor.motorB("backward");
+        motor.motorA("forward");
+      } else if (irRightVal == 1 && irLeftVal != 1) {
+        motor.motorA("backward");
+        motor.motorB("forward");
+      } else if (irLeftVal == 1 && irRightVal == 1) {
+        for (int i = 0; i < 150; i++) {
+          motor.motorA("backward");
+          motor.motorB("backward");
+        }
+      } else {
+        motor.motorA("forward");
+        motor.motorB("forward");
+      }
+    }
+  }
+}
+/*------------------------------*/
+
+
+/*------us Functies------*/
 long timeToMillimeters(long pulseTime) {
   return ((pulseTime >> 1) / 2.9);
 }
 
-UltrasonicSensor usVoor, usOnder;
-volatile unsigned long pulseTimeVoor;
-volatile unsigned long pulseTimeOnder;
-
 void startTimerInterruptLoop() {
   cli();
-
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1 = 0;
@@ -46,132 +161,36 @@ void startTimerInterruptLoop() {
 }
 
 ISR(TIMER1_COMPA_vect) {
-  usVoor.pulse();
+  usFront.pulse();
 }
 
-void isrVoor() {
+void isrFront() {
   static unsigned long start;
-  if (digitalRead(usVoor.echo)) {
+  if (digitalRead(usFront.echo)) {
     start = micros();
   } else {
-    pulseTimeVoor = micros() - start;
+    pulseTimeFront = micros() - start;
   }
-  usOnder.pulse();
+  usUnder.pulse();
 }
 
-void isrOnder() {
+void isrUnder() {
   static unsigned long start;
-  if (digitalRead(usOnder.echo)) {
+  if (digitalRead(usUnder.echo)) {
     start = micros();
   } else {
-    pulseTimeOnder = micros() - start;
+    pulseTimeUnder = micros() - start;
   }
 }
+/*------------------------*/
 
-motorController motor(motorPin1A, motorPin1B, motorPin2A, motorPin2B);
 
-void setup() {
-  Serial.begin(9600);
-  pinMode(infraroodLinks, INPUT_PULLUP);
-  pinMode(infraroodRechts, INPUT_PULLUP);
-  usOnder = UltrasonicSensor(ultrasoonTrigOnder, ultrasoonEchoOnder, isrOnder);
-  usVoor = UltrasonicSensor(ultrasoonTrigVoor, ultrasoonEchoVoor, isrVoor);
-  startTimerInterruptLoop();
-}
-
-void getEspResponse()
-{
-  int SerialBuffer = 0;
-
-  if (Serial.available() > 0)
-  {
-    //ESPRESPONSE = Serial.parseInt();
-    ESPRESPONSE = Serial.read();
-    //Serial.println(ESPRESPONSE);
-    if (ESPRESPONSE == 5)
-    {
-      if (MANCONTROL)
-      {
-        MANCONTROL = false;
-      }
-      else
-      {
-        MANCONTROL = true;
-      }
-    }
+/*------ESP Functies------*/
+void getEspResponse() {
+  int serialBuffer = 0;
+  if (Serial.available() > 0) {
+    espResponse = Serial.read();
   }
+  if (debug) Serial.println("ESP Response : " + (String)espResponse);
 }
-
-void loop() {
-  getEspResponse();
-
-  //Serial.println("in the main loop");
-  while (MANCONTROL)
-  {
-    //Serial.println("the man control loop");
-    getEspResponse();
-    if (!MANCONTROL) break;
-    switch (ESPRESPONSE)
-    {
-      case 1:
-        motor.motorA("forward");
-        motor.motorB("forward");
-        Serial.println("Forward");
-        break;
-      case 4:
-        motor.motorB("backward");
-        motor.motorA("forward");
-        Serial.println("Left");
-        break;
-      case 3:
-        motor.motorA("forward");
-        motor.motorB("backward");
-        Serial.println("Right");
-        break;
-      case 2:
-        motor.motorA("backward");
-        motor.motorB("backward");
-        Serial.println("Back");
-        break;
-    }
-  }
-
-  if (!MANCONTROL)
-  {
-    int infraroodLinksVal = digitalRead(infraroodLinks);
-    int infraroodRechtsVal = digitalRead(infraroodRechts);
-
-    if (timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
-      while (timeToMillimeters(pulseTimeVoor) < ultrasoonVoorAfstand) {
-        motor.motorA("backward");
-        motor.motorB("forward");
-        delay(100);
-        getEspResponse();
-        if (MANCONTROL) break;
-      }
-      motor.motorA("forward");
-    }
-    while (timeToMillimeters(pulseTimeOnder) > ultrasoonOnderAfstand) {
-      motor.motorA("stop");
-      motor.motorB("stop");
-      getEspResponse();
-      if (MANCONTROL) break;
-    }
-    if (infraroodLinksVal == 1 && infraroodRechtsVal != 1) {
-      motor.motorB("backward");
-      motor.motorA("forward");
-    } else if (infraroodRechtsVal == 1 && infraroodLinksVal != 1) {
-      motor.motorA("backward");
-      motor.motorB("forward");
-    } else if (infraroodRechtsVal == 1 && infraroodLinksVal == 1) {
-      for (int i = 0; i < 150; i++) {
-        motor.motorA("backward");
-        motor.motorB("backward");
-      }
-    } else {
-      motor.motorA("forward");
-      motor.motorB("forward");
-    }
-  }
-
-}
+/*------------------------*/
