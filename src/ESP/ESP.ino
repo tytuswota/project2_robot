@@ -1,4 +1,3 @@
-
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -9,11 +8,13 @@ MDNSResponder mdns;
 
  
 ESP8266WebServer server(80);
+
+//charlies hotspot
 const char* ssid     = "Tesla IoT";      //wifi name
 const char* password = "fsL6HgjN";  //wifi password
 
-//const char* ssid     = "Martaton";      //wifi name
-//const char* password = "Nella2018";  //wifi password
+const char* ssid2     = "Martaton";      //wifi name
+const char* password2 = "Nella2018";  //wifi password
 //FireData firebaseData;
 
 void handleRoot() 
@@ -76,6 +77,21 @@ void setup()
   Serial.begin(9600);
   
   WiFi.begin(ssid, password);
+  int n = WiFi.scanNetworks();
+
+  for (int i = 0; i < n; ++i) 
+  {
+    if (WiFi.SSID(i)== ssid ) 
+    {
+      WiFi.begin(ssid,password); //trying to connect the modem
+      break;
+    }
+    if(WiFi.SSID(i)==ssid2)
+    {
+      WiFi.begin(ssid2,password2);
+      break;
+    }
+  }
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);

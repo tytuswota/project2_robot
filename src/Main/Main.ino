@@ -116,22 +116,22 @@ void loop() {
       case 1:
         motor.motorA("forward");
         motor.motorB("forward");
-        Serial.println("Forward");
+        //Serial.println("Forward");
         break;
       case 4:
         motor.motorB("backward");
         motor.motorA("forward");
-        Serial.println("Left");
+        //Serial.println("Left");
         break;
       case 3:
         motor.motorA("forward");
         motor.motorB("backward");
-        Serial.println("Right");
+        //Serial.println("Right");
         break;
       case 2:
         motor.motorA("backward");
         motor.motorB("backward");
-        Serial.println("Back");
+        //Serial.println("Back");
         break;
     }
   }
