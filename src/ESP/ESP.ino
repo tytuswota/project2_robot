@@ -8,12 +8,15 @@ MDNSResponder mdns;
 
  
 ESP8266WebServer server(80);
+const char* ssid     = "A";      //wifi name
+const char* password = "Babaman12";  //wifi 
+
 //const char* ssid     = "Tesla IoT";      //wifi name
 //const char* password = "fsL6HgjN";  //wifi password
 
 
-const char* ssid     = "Tjarlei";      //wifi name
-const char* password = "Chaplinn!";  //wifi password
+//const char* ssid     = "Tjarlei";      //wifi name
+//const char* password = "Chaplinn!";  //wifi password
 
 //const char* ssid     = "Martaton";      //wifi name
 //const char* password = "Nella2018";  //wifi password
@@ -47,31 +50,37 @@ void handleControls()
  {  
    if(server.arg("direction") == "forward")
    {
+     Serial.println("forward");
      Serial.write(1);
    }
 
    if(server.arg("direction") == "man")
    {
+     Serial.println("man");
      Serial.write(5);
    }
 
    if(server.arg("direction") == "back")
    {
+      Serial.println("back");
       Serial.write(2);
    }
 
    if(server.arg("direction") == "right")
    {
+       Serial.println("right");
        Serial.write(3);
    }
 
    if(server.arg("direction") == "left")
    {
+      Serial.println("left");
       Serial.write(4);
    }
    if(server.arg("direction") == "stop_trans")
    {
-    Serial.write(0);
+    Serial.println("stop");
+    Serial.write(9);
    }
  }
  
