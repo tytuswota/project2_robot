@@ -48,7 +48,6 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     grid-row-start: 3;
     grid-row-end: 3;
   }
-
   .container-item {
     background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.8);
@@ -94,11 +93,6 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
           console.log("1");
           });
     });
-    $("button").mouseup(function(){
-      $.post( "/controller", {direction:"stop_trans"})
-        .done(function(data){
-          console.log("0");
-          });});
   });
 
 </script>  
@@ -108,8 +102,8 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     <button class="manual" class="container-item">manual</button><br/>
     <button class="forward" class="container-item">forward</button>
     <button class="back" class="container-item">back</button>
-    <button class="right" class="container-item">left</button>
-    <button class="left" class="container-item">right</button>
+    <button class="right" class="container-item">right</button>
+    <button class="left" class="container-item">left</button>
   </div>
 </BODY>
-)=====";
+)====="; 

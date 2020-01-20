@@ -6,15 +6,17 @@
 #include "main.h"
 MDNSResponder mdns;
 
-
+ 
 ESP8266WebServer server(80);
+//const char* ssid     = "Tesla IoT";      //wifi name
+//const char* password = "fsL6HgjN";  //wifi password
 
-//charlies hotspot
-const char* ssid     = "Tesla IoT";      //wifi name
-const char* password = "fsL6HgjN";  //wifi password
 
-const char* ssid2     = "Martaton";      //wifi name
-const char* password2 = "Nella2018";  //wifi password
+const char* ssid     = "Tjarlei";      //wifi name
+const char* password = "Chaplinn!";  //wifi password
+
+//const char* ssid     = "Martaton";      //wifi name
+//const char* password = "Nella2018";  //wifi password
 //FireData firebaseData;
 
 void handleRoot() 
@@ -67,52 +69,39 @@ void handleControls()
    {
       Serial.write(4);
    }
-
+   if(server.arg("direction") == "stop_trans")
+   {
+    Serial.write(0);
+   }
  }
-
+ 
 }
 
-void setup()
-{
+void setup(){
   Serial.begin(9600);
-
+  
   WiFi.begin(ssid, password);
-  int n = WiFi.scanNetworks();
-
-  for (int i = 0; i < n; ++i) 
-  {
-    if (WiFi.SSID(i)== ssid ) 
-    {
-      WiFi.begin(ssid,password); //trying to connect the modem
-      break;
-    }
-    if(WiFi.SSID(i)==ssid2)
-    {
-      WiFi.begin(ssid2,password2);
-      break;
-    }
-  }
-
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-
+ 
   Serial.println("");
   Serial.println("WiFi aangesloten");  
   Serial.println("IP addres: ");
   Serial.println(WiFi.localIP());
-
+  
   if (mdns.begin("esp8266", WiFi.localIP())) 
     Serial.println("MDNS responder gestart");
-
+  
   server.on("/", HTTP_GET, handleRoot);  
   server.on("/login",HTTP_POST, handleLogin);
   server.on("/controller",HTTP_POST, handleControls);
   server.begin();
   Serial.println("HTTP server gestart");
 }
-
+ 
 void loop() 
 {
   //runs the client
