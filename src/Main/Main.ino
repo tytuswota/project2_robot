@@ -23,13 +23,13 @@
 
 #define motorPin1A 10
 #define motorPin1B 9
-#define motorPin2A 5
-#define motorPin2B 4
+#define motorPin2A 4
+#define motorPin2B 5
 
 #define usFrontDistance 150
 #define usUnderDistance 300
 
-bool debug = true;
+bool debug = false;
 
 int espResponse = 0;
 int serialBuffer = 0;
@@ -63,6 +63,8 @@ void setup() {
 void loop() {
   getEspResponse();
 
+  if (debug) Serial.println(manControl);
+
   if (manControl) {
     if (debug) Serial.println("ManControl");
     switch (espResponse) {
@@ -82,12 +84,14 @@ void loop() {
         if (debug) Serial.println("Right");
         break;
       case 4:
-        motor.motorB("backward");
-        motor.motorA("forward");
+        motor.motorA("backward");
+        motor.motorB("forward");
         if (debug) Serial.println("Left");
         break;
-      case 5:
-        manControl = !manControl;
+      default:
+        motor.motorA("stop");
+        motor.motorB("stop");
+        if (debug) Serial.println("Stop");
         break;
     }
   }
@@ -107,24 +111,32 @@ void loop() {
         motor.motorA("backward");
         motor.motorB("forward");
         getEspResponse();
-        if (debug) Serial.println("US Front : " + (String)timeToMillimeters(pulseTimeFront));
       }
       motor.motorA("forward");
     }
     else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
-      while (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
-        motor.motorA("stop");
-        motor.motorB("stop");
-        getEspResponse();
-        if (debug) Serial.println("US Under : " + (String)timeToMillimeters(pulseTimeUnder));
+//      while(timeToMillimeters(pulseTimeUnder) > usUnderDistance){
+//        motor.motorA("stop");
+//        motor.motorB("stop");
+//      }
+      unsigned long prevTime = millis();
+      while(prevTime + 2000 > millis()){
+        motor.motorA("backward");
+        motor.motorB("backward");
+        if(debug) Serial.println("AFGROND");
       }
+      prevTime = millis();
+      while(prevTime + 1000 > millis()){
+        motor.motorA("forward");
+      }
+      motor.motorB("forward");
     }
     else {
       if (irLeftVal == 1 && irRightVal != 1) {
-        motor.motorB("stop");
+        motor.motorB("backward");
         motor.motorA("forward");
       } else if (irRightVal == 1 && irLeftVal != 1) {
-        motor.motorA("stop");
+        motor.motorA("backward");
         motor.motorB("forward");
       } else if (irLeftVal == 1 && irRightVal == 1) {
         for (int i = 0; i < 500; i++) {
@@ -187,11 +199,21 @@ void isrUnder() {
 
 
 /*------ESP Functies------*/
+bool oneTime = false;
 void getEspResponse() {
   int serialBuffer = 0;
   if (Serial.available() > 0) {
     espResponse = Serial.read();
   }
+
+  if(espResponse == 5 && !oneTime){
+    manControl = !manControl;
+    oneTime = true;
+  }
+  else if(espResponse != 5 && oneTime){
+    oneTime = false;
+  }
+  
   if (debug) Serial.println("ESP Response : " + (String)espResponse);
 }
 /*------------------------*/
