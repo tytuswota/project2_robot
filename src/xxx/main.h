@@ -48,7 +48,6 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     grid-row-start: 3;
     grid-row-end: 3;
   }
-
   .container-item {
     background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.8);
@@ -64,52 +63,35 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
   crossorigin="anonymous"></script>
 <script>
   $(document).ready(function(){
-    
-    function postDir(d){
-      $.post( "/controller", {direction: d})
+    $(".manual").click(function(){
+      $.post( "/controller", {direction:"man"})
         .done(function(data){
           console.log("1");
-          });}
-    
-    function postStop(){
-      $.post( "/controller", {direction: "stop_trans"})
+          });
+    });
+    $(".forward").click(function(){
+      $.post( "/controller", {direction:"forward"})
         .done(function(data){
           console.log("1");
-          });}
-    
-    $('.manual').on('mousedown', function() {
-      postDir("man");
-    }).on('mouseup', function() {
-      postStop();
-      clearTimeout(timeoutId);
+          });
     });
-
-    $('.forward').on('mousedown', function() {
-      postDir("forward");
-    }).on('mouseup', function() {
-      postStop();
-      clearTimeout(timeoutId);
+    $(".back").click(function(){
+      $.post( "/controller", {direction:"back"})
+        .done(function(data){
+          console.log("1");
+          });
     });
-
-    $('.back').on('mousedown', function() {
-      postDir("back");
-    }).on('mouseup', function() {
-      postStop();
-      clearTimeout(timeoutId);
+    $(".right").click(function(){
+      $.post( "/controller", {direction:"right"})
+        .done(function(data){
+          console.log("1");
+          });
     });
-
-    $('.right').on('mousedown', function() {
-      postDir("right");
-    }).on('mouseup', function() {
-      postStop();
-      clearTimeout(timeoutId);
-    });
-
-    $('.left').on('mousedown', function() {
-      postDir("left");
-    }).on('mouseup', function() {
-      postStop();
-      clearTimeout(timeoutId);
+    $(".left").click(function(){
+      $.post( "/controller", {direction:"left"})
+        .done(function(data){
+          console.log("1");
+          });
     });
   });
 
@@ -120,8 +102,8 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     <button class="manual" class="container-item">manual</button><br/>
     <button class="forward" class="container-item">forward</button>
     <button class="back" class="container-item">back</button>
-    <button class="left" class="container-item">left</button>
     <button class="right" class="container-item">right</button>
+    <button class="left" class="container-item">left</button>
   </div>
 </BODY>
-)=====";
+)====="; 
