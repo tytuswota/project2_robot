@@ -33,7 +33,7 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     grid-row-end: 4;
   }
   
-  .right
+  .left
   {
     grid-column-start: 1;
     grid-column-end: 1;
@@ -41,7 +41,7 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     grid-row-end: 3;
   }
   
-  .left
+  .right
   {
     grid-column-start: 3;
     grid-column-end: 3;
