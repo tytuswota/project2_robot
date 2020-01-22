@@ -129,17 +129,21 @@ void loop() {
     }
     else {
       if (irLeftVal == 1 && irRightVal != 1) {
+        unsigned long prevTime = millis();
         motor.motorA("backward");
         motor.motorB("backward");
-        delay(100);
+        while(prevTime + 1000 > millis()){}
+        prevTime = millis();
         motor.motorA("forward");
-        delay(100);
+        while(prevTime + 500 > millis()){}
       } else if (irRightVal == 1 && irLeftVal != 1) {
+        unsigned long prevTime = millis();
         motor.motorA("backward");
         motor.motorB("backward");
-        delay(100);
+        while(prevTime + 1000 > millis()){}
         motor.motorB("forward");
-        delay(100);
+        prevTime = millis();
+        while(prevTime + 500 > millis()){}
       } else if (irLeftVal == 1 && irRightVal == 1) {
         for (int i = 0; i < 500; i++) {
           motor.motorA("backward");
