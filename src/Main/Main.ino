@@ -115,6 +115,7 @@ void loop() {
       motor.motorA("forward");
     }
     else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
+      Serial.print(usUnderDistance);
       unsigned long prevTime = millis();
       while(prevTime + 2000 > millis()){
         motor.motorA("backward");
