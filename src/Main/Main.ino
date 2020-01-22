@@ -115,10 +115,6 @@ void loop() {
       motor.motorA("forward");
     }
     else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
-//      while(timeToMillimeters(pulseTimeUnder) > usUnderDistance){
-//        motor.motorA("stop");
-//        motor.motorB("stop");
-//      }
       unsigned long prevTime = millis();
       while(prevTime + 2000 > millis()){
         motor.motorA("backward");
@@ -133,11 +129,17 @@ void loop() {
     }
     else {
       if (irLeftVal == 1 && irRightVal != 1) {
+        motor.motorA("backward");
         motor.motorB("backward");
+        delay(100);
         motor.motorA("forward");
+        delay(100);
       } else if (irRightVal == 1 && irLeftVal != 1) {
         motor.motorA("backward");
+        motor.motorB("backward");
+        delay(100);
         motor.motorB("forward");
+        delay(100);
       } else if (irLeftVal == 1 && irRightVal == 1) {
         for (int i = 0; i < 500; i++) {
           motor.motorA("backward");

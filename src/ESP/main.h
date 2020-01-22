@@ -35,16 +35,16 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
   
   .left
   {
-    grid-column-start: 1;
-    grid-column-end: 1;
+    grid-column-start: 3;
+    grid-column-end: 3;
     grid-row-start: 3;
     grid-row-end: 3;
   }
   
   .right
   {
-    grid-column-start: 3;
-    grid-column-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 1;
     grid-row-start: 3;
     grid-row-end: 3;
   }
