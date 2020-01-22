@@ -73,7 +73,6 @@ void setup() {
 
 void loop() {
   getEspResponse();
-  checkHallSensors(!(digitalRead(hallSensor1) && digitalRead(hallSensor2) && digitalRead(hallSensor3)));
 
   if (debug) Serial.println(manControl);
 
@@ -136,11 +135,13 @@ void loop() {
       while(prevTime + 2000 > millis()){
         motor.motorA("backward");
         motor.motorB("backward");
+        getEspResponse();
         if(debug) Serial.println("AFGROND");
       }
       prevTime = millis();
-      while(prevTime + 1000 > millis()){
+      while(prevTime + 1300 > millis()){
         motor.motorA("forward");
+        getEspResponse();
       }
       motor.motorB("forward");
     }
@@ -149,18 +150,18 @@ void loop() {
         unsigned long prevTime = millis();
         motor.motorA("backward");
         motor.motorB("backward");
-        while(prevTime + 500 > millis()){}
+        while(prevTime + 500 > millis()){getEspResponse();}
         prevTime = millis();
         motor.motorA("forward");
-        while(prevTime + 500 > millis()){}
+        while(prevTime + 300 > millis()){getEspResponse();}
       } else if (irRightVal == 1 && irLeftVal != 1) {
         unsigned long prevTime = millis();
         motor.motorA("backward");
         motor.motorB("backward");
-        while(prevTime + 500 > millis()){}
+        while(prevTime + 500 > millis()){getEspResponse();}
         motor.motorB("forward");
         prevTime = millis();
-        while(prevTime + 500 > millis()){}
+        while(prevTime + 300 > millis()){getEspResponse();}
       } else if (irLeftVal == 1 && irRightVal == 1) {
         for (int i = 0; i < 500; i++) {
           motor.motorA("backward");
@@ -236,6 +237,8 @@ void getEspResponse() {
   else if(espResponse != 5 && oneTime){
     oneTime = false;
   }
+
+  checkHallSensors(!(digitalRead(hallSensor1) && digitalRead(hallSensor2) && digitalRead(hallSensor3)));
   
   if (debug) Serial.println("ESP Response : " + (String)espResponse);
 }
