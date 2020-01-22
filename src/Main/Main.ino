@@ -26,10 +26,16 @@
 #define motorPin2A 4
 #define motorPin2B 5
 
+#define hallSensor1 A0
+#define hallSensor2 A1
+#define hallSensor3 A2
+
+#define magnetDetectionLed A3
+
 #define usFrontDistance 150
 #define usUnderDistance 300
 
-bool debug = false;
+constexpr bool debug = false;
 
 int espResponse = 0;
 int serialBuffer = 0;
@@ -45,6 +51,7 @@ ISR(TIMER1_COMPA_vect);
 void isrFront();
 void isrUnder();
 void getEspResponse();
+void checkHallSensors(int hallSensorOutput);
 
 motorController motor(motorPin1A, motorPin1B, motorPin2A, motorPin2B);
 /*---------------------*/
@@ -62,6 +69,7 @@ void setup() {
 
 void loop() {
   getEspResponse();
+  checkHallSensors(!(digitalRead(hallSensor1) && digitalRead(hallSensor2) && digitalRead(hallSensor3)));
 
   if (debug) Serial.println(manControl);
 
@@ -111,6 +119,7 @@ void loop() {
         motor.motorA("backward");
         motor.motorB("forward");
         getEspResponse();
+        checkHallSensors(!(digitalRead(hallSensor1) && digitalRead(hallSensor2) && digitalRead(hallSensor3)));
       }
       motor.motorA("forward");
     }
@@ -221,5 +230,18 @@ void getEspResponse() {
   }
   
   if (debug) Serial.println("ESP Response : " + (String)espResponse);
+}
+/*------------------------*/
+
+/*--Hall sensor Functies--*/
+void checkHallSensors(int hallSensorOutput) {
+  static int ledTurnOffTime = 0;
+  if(hallSensorOutput) {
+    ledTurnOffTime = millis() + 2000;
+    digitalWrite(magnetDetectionLed, 1);
+  }
+  if(millis() > ledTurnOffTime) {
+    digitalWrite(magnetDetectionLed, 0);
+  }
 }
 /*------------------------*/
