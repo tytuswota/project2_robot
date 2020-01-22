@@ -107,11 +107,11 @@ void loop() {
     if (debug) Serial.println("US Under : " + (String) timeToMillimeters(pulseTimeUnder));
 
     if (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
-      while (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
-        motor.motorA("backward");
-        motor.motorB("forward");
-        getEspResponse();
-      }
+      unsigned long prevTime = millis();
+      motor.motorA("backward");
+      motor.motorB("forward");
+      while(prevTime + 500 > millis()){getEspResponse();}
+      prevTime = millis();
       motor.motorA("forward");
     }
     else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
