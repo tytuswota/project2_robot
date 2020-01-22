@@ -63,6 +63,7 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
   crossorigin="anonymous"></script>
 <script>
+  var control = false;
   $(document).ready(function(){
     
     function postDir(d){
@@ -78,6 +79,14 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
           });}
     
     $('.manual').on('mousedown', function() {
+      if(control){
+        console.log("kut zooi");
+        $('.manual').css("background-color", "#800D2F");
+      }else{
+       console.log("java script is kut");
+       $('.manual').css("background-color", "green");
+      }
+      control = !control;
       postDir("man");
     }).on('mouseup', function() {
       postStop();
