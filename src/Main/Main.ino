@@ -132,7 +132,7 @@ void loop() {
         unsigned long prevTime = millis();
         motor.motorA("backward");
         motor.motorB("backward");
-        while(prevTime + 1000 > millis()){}
+        while(prevTime + 500 > millis()){}
         prevTime = millis();
         motor.motorA("forward");
         while(prevTime + 500 > millis()){}
@@ -140,7 +140,7 @@ void loop() {
         unsigned long prevTime = millis();
         motor.motorA("backward");
         motor.motorB("backward");
-        while(prevTime + 1000 > millis()){}
+        while(prevTime + 500 > millis()){}
         motor.motorB("forward");
         prevTime = millis();
         while(prevTime + 500 > millis()){}
