@@ -109,8 +109,12 @@ void loop() {
     if (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
       unsigned long prevTime = millis();
       motor.motorA("backward");
-      motor.motorB("forward");
+      motor.motorB("backward");
       while(prevTime + 500 > millis()){getEspResponse();}
+      prevTime = millis(); 
+      motor.motorA("backward");
+      motor.motorB("forward");
+      while(prevTime + 250 > millis()){getEspResponse();}
       prevTime = millis();
       motor.motorA("forward");
     }
