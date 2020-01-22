@@ -62,6 +62,10 @@ void setup() {
   Serial.begin(9600);
   pinMode(irLeft, INPUT_PULLUP);
   pinMode(irRight, INPUT_PULLUP);
+  pinMode(hallSensor1, INPUT_PULLUP);
+  pinMode(hallSensor2, INPUT_PULLUP);
+  pinMode(hallSensor3, INPUT_PULLUP);
+  pinMode(magnetDetectionLed, OUTPUT);
   usUnder = UltrasonicSensor(usTrigUnder, usEchoUnder, isrUnder);
   usFront = UltrasonicSensor(usTrigFront, usEchoFront, isrFront);
   startTimerInterruptLoop();
