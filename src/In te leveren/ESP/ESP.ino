@@ -62,7 +62,7 @@ void handleControls()
  }
 }
 
-//here the handlers are setup up, the port and the network connection
+//here the handlers are setup up and the network connection
 void setup(){
   Serial.begin(9600);
   WiFi.begin(ssid, password);
