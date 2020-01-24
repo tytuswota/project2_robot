@@ -1,3 +1,16 @@
+/*
+   Project 2 - RescueBots - ESP
+
+   Namen: Don Luyendijk   - 0970101
+          Tymek Pisko     - 0986216
+          Gillbert Resida - 0990026
+          Charlie de Raaf - 0987084
+
+   Klas:  TI1E - Groep 4
+*/
+
+/*------Initialisatie------*/
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -30,7 +43,7 @@ void handleLogin()
 
   if( ! server.hasArg("username") || ! server.hasArg("password") 
       || server.arg("username") == NULL || server.arg("password") == NULL) { 
-    //server.send(400, "text/plain", "400: Invalid Request");        
+    server.send(400, "text/plain", "400: Invalid Request");        
     return;
   }
   if(server.arg("username") == username && server.arg("password") == password) { 
@@ -46,36 +59,7 @@ void handleControls()
  if(server.hasArg("direction"))
  {  
    Serial.write(server.arg("direction"));
-   /*if(server.arg("direction") == "forward")
-   {
-     Serial.write(1);
-   }
-
-   if(server.arg("direction") == "man")
-   {
-     Serial.write(5);
-   }
-
-   if(server.arg("direction") == "back")
-   {
-      Serial.write(2);
-   }
-
-   if(server.arg("direction") == "right")
-   {
-       Serial.write(3);
-   }
-
-   if(server.arg("direction") == "left")
-   {
-      Serial.write(4);
-   }
-   if(server.arg("direction") == "stop_trans")
-   {
-    Serial.write(9);
-   }*/
  }
- 
 }
 
 //here the handlers are setup up, the port and the network connection

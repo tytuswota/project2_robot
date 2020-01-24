@@ -63,7 +63,6 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
 <script>
   var control = false;
   $(document).ready(function(){
-    
     function postDir(d){
       $.post( "/controller", {direction: d})
         .done(function(data){
