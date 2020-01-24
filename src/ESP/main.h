@@ -1,4 +1,3 @@
-#include <Esp.h>
 const char CONTROLLER_page[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <HEAD>
@@ -35,20 +34,19 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
   
   .left
   {
-    grid-column-start: 3;
-    grid-column-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 1;
     grid-row-start: 3;
     grid-row-end: 3;
   }
   
   .right
   {
-    grid-column-start: 1;
-    grid-column-end: 1;
+    grid-column-start: 3;
+    grid-column-end: 3;
     grid-row-start: 3;
     grid-row-end: 3;
   }
-
   .container-item {
     background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.8);
@@ -73,49 +71,47 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
           });}
     
     function postStop(){
-      $.post( "/controller", {direction: "stop_trans"})
+      $.post( "/controller", {direction: 9})
         .done(function(data){
           console.log("1");
           });}
     
     $('.manual').on('mousedown', function() {
       if(control){
-        console.log("kut zooi");
         $('.manual').css("background-color", "#800D2F");
       }else{
-       console.log("java script is kut");
        $('.manual').css("background-color", "green");
       }
       control = !control;
-      postDir("man");
+      postDir(5);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.forward').on('mousedown', function() {
-      postDir("forward");
+      postDir(1);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.back').on('mousedown', function() {
-      postDir("back");
+      postDir(2);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.right').on('mousedown', function() {
-      postDir("right");
+      postDir(3);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.left').on('mousedown', function() {
-      postDir("left");
+      postDir(4);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
