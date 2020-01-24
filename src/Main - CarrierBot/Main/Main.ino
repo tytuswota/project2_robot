@@ -1,5 +1,5 @@
 /*
-   Project 2 - RescueBots
+   Project 2 - RescueBots - Carier
 
    Namen: Don Luyendijk   - 0970101
           Tymek Pisko     - 0986216
@@ -69,27 +69,27 @@ void loop() {
   if (manControl) {
     if (debug) Serial.println("ManControl");
     switch (espResponse) {
-      case 1:
+      case 1: //Forward
         motor.motorA("forward");
         motor.motorB("forward");
         if (debug) Serial.println("Forward");
         break;
-      case 2:
+      case 2: // Backward
         motor.motorA("backward");
         motor.motorB("backward");
         if (debug) Serial.println("Back");
         break;
-      case 3:
+      case 3: //Right
         motor.motorA("forward");
         motor.motorB("backward");
         if (debug) Serial.println("Right");
         break;
-      case 4:
+      case 4: //Left
         motor.motorA("backward");
         motor.motorB("forward");
         if (debug) Serial.println("Left");
         break;
-      default:
+      default: //If the button isn't pressed, stop both motors
         motor.motorA("stop");
         motor.motorB("stop");
         if (debug) Serial.println("Stop");
@@ -98,67 +98,61 @@ void loop() {
   }
   else {
     if (debug) Serial.println("Normal mode");
+    //Read ir values
     int irLeftVal = digitalRead(irLeft);
     int irRightVal = digitalRead(irRight);
 
-     Serial.println("IR Left : " + (String) irLeftVal);
-     Serial.println("IR Right : " + (String) irRightVal);
+    if (debug) Serial.println("IR Left : " + (String) irLeftVal);
+    if (debug) Serial.println("IR Right : " + (String) irRightVal);
 
-     Serial.println("US Front : " + (String) timeToMillimeters(pulseTimeFront));
-     Serial.println("US Under : " + (String) timeToMillimeters(pulseTimeUnder));
+    if (debug) Serial.println("US Front : " + (String) timeToMillimeters(pulseTimeFront));
+    if (debug) Serial.println("US Under : " + (String) timeToMillimeters(pulseTimeUnder));
 
-    if (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
+    if (timeToMillimeters(pulseTimeFront) < usFrontDistance) { //Check the ultrasonic sensor on the front, if something is to close, execute the following code
       unsigned long prevTime = millis();
-      motor.motorA("backward");
+      motor.motorA("backward"); //Set both motors to backward
       motor.motorB("backward");
-      while(prevTime + 500 > millis()){getEspResponse();}
+      while(prevTime + 500 > millis()){getEspResponse();} //Let the bot ride backward for 0.5 sec
       prevTime = millis(); 
-      motor.motorA("backward");
-      motor.motorB("forward");
-      while(prevTime + 250 > millis()){getEspResponse();}
+      motor.motorB("forward"); //Set motors to left
+      while(prevTime + 250 > millis()){getEspResponse();} //Let the bot turn for 0.25 sec
       prevTime = millis();
-      motor.motorA("forward");
+      motor.motorA("forward"); //Set both motors to forward
     }
-    else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
-//      Serial.print(usUnderDistance);
+    else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) { //Check the ultrasonic sensor on the bottom, if time between pulses is too big, execute the following code
       unsigned long prevTime = millis();
-      while(prevTime + 2000 > millis()){
-        motor.motorA("backward");
-        motor.motorB("backward");
-        getEspResponse();
-        if(debug) Serial.println("AFGROND");
-      }
+      motor.motorA("backward"); //Set both motors to backward
+      motor.motorB("backward");
+      while(prevTime + 2000 > millis()){getEspResponse();} //Let the bot ride backward for 2 sec
       prevTime = millis();
-      while(prevTime + 1300 > millis()){
-        motor.motorA("forward");
-        getEspResponse();
-      }
-      motor.motorB("forward");
+      motor.motorA("forward"); //Set motors to right
+      while(prevTime + 1300 > millis()){getEspResponse();} //Let the bot turn for 1.3 sec
+      motor.motorB("forward"); //Set both motors to forward
     }
     else {
-      if (irLeftVal == 1 && irRightVal != 1) {
+      if (irLeftVal == 1 && irRightVal != 1) { //Check if the left ir sensor detects a line
         unsigned long prevTime = millis();
-        motor.motorA("backward");
+        motor.motorA("backward"); //Set both motors to backward
         motor.motorB("backward");
-        while(prevTime + 500 > millis()){getEspResponse();}
+        while(prevTime + 500 > millis()){getEspResponse();} //Let the bot ride backward for 0.5 sec
         prevTime = millis();
-        motor.motorA("forward");
-        while(prevTime + 300 > millis()){getEspResponse();}
-      } else if (irRightVal == 1 && irLeftVal != 1) {
+        motor.motorA("forward"); //Set motors to right
+        while(prevTime + 300 > millis()){getEspResponse();} //Let the bot ride backward for 0.3 sec
+      } else if (irRightVal == 1 && irLeftVal != 1) { //Check if the right ir sensor detects a line
         unsigned long prevTime = millis();
-        motor.motorA("backward");
+        motor.motorA("backward"); //Set both motors to backward
         motor.motorB("backward");
-        while(prevTime + 500 > millis()){getEspResponse();}
-        motor.motorB("forward");
+        while(prevTime + 500 > millis()){getEspResponse();} //Let the bot ride backward for 0.5 sec
+        motor.motorB("forward"); //Set motors to left
         prevTime = millis();
-        while(prevTime + 300 > millis()){getEspResponse();}
-      } else if (irLeftVal == 1 && irRightVal == 1) {
-        for (int i = 0; i < 500; i++) {
-          motor.motorA("backward");
-          motor.motorB("backward");
-        }
-      } else {
-        motor.motorA("forward");
+        while(prevTime + 300 > millis()){getEspResponse();} //Let the bot ride backward for 0.3 sec
+      } else if (irLeftVal == 1 && irRightVal == 1) { //Check if both ir sensors detect a line
+        unsigned long prevTime = millis();
+        motor.motorA("backward"); //Set both motors to backward
+        motor.motorB("backward");
+        while(prevTime + 500 > millis()){getEspResponse();} //Let the bot ride backward for 0.5 sec
+      } else { //If not a single sensor detects something, do this
+        motor.motorA("forward"); //Set both motors to forward
         motor.motorB("forward");
       }
     }
@@ -228,6 +222,6 @@ void getEspResponse() {
     oneTime = false;
   }
   
-//  if (debug) Serial.println("ESP Response : " + (String)espResponse);
+  if (debug) Serial.println("ESP Response : " + (String)espResponse);
 }
 /*------------------------*/
