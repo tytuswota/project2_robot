@@ -19,7 +19,7 @@ class motorController {
       pinMode(motor2B, OUTPUT);
     }
 
-    void motorA(String command){
+    void motorA(String command){ //Set rotation for motor A
       if(command == "forward"){
         digitalWrite(motor2A, HIGH);
         digitalWrite(motor2B, LOW);
@@ -37,7 +37,7 @@ class motorController {
       }
     }
 
-    void motorB(String command){
+    void motorB(String command){ //Set rotation for motor B
       if(command == "forward"){
         digitalWrite(motor1A, HIGH);
         digitalWrite(motor1B, LOW);

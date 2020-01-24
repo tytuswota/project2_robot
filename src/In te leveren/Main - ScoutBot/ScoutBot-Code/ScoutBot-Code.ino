@@ -235,15 +235,15 @@ void isrUnder() {
 bool oneTime = false;
 void getEspResponse() {
   int serialBuffer = 0;
-  if (Serial.available() > 0) {
+  if (Serial.available() > 0) { //If the ESP sends data, read it
     espResponse = Serial.read();
   }
 
-  if(espResponse == 5 && !oneTime){
+  if(espResponse == 5 && !oneTime){ //If the ESP sends the number 5, switch the bot mode, from manual to automatic and vice versa, after lock the switch so it can only switch once
     manControl = !manControl;
     oneTime = true;
   }
-  else if(espResponse != 5 && oneTime){
+  else if(espResponse != 5 && oneTime){ //If the ESP sends anything else than the number 5, unlock the switch
     oneTime = false;
   }
 
