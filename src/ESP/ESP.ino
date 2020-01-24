@@ -7,18 +7,13 @@
 ESP8266WebServer server(80);
 //====================
 //the networks
-const char* ssid     = "A";      //wifi name
-const char* password = "Babaman12";  //wifi 
 
 //const char* ssid     = "Tesla IoT";      //wifi name
 //const char* password = "fsL6HgjN";  //wifi password
 
-//const char* ssid     = "Tjarlei";      //wifi name
-//const char* password = "Chaplinn!";  //wifi password
+const char* ssid     = "Tjarlei";      //wifi name
+const char* password = "Chaplinn!";  //wifi password
 
-//const char* ssid     = "Martaton";      //wifi name
-//const char* password = "Nella2018";  //wifi password
-//FireData firebaseData;
 
 void handleRoot() 
 {   
