@@ -50,40 +50,35 @@ void handleControls()
 {
  if(server.hasArg("direction"))
  {  
-   if(server.arg("direction") == "forward")
+   Serial.write(server.arg("direction"));
+   /*if(server.arg("direction") == "forward")
    {
-     Serial.println("forward");
      Serial.write(1);
    }
 
    if(server.arg("direction") == "man")
    {
-     Serial.println("man");
      Serial.write(5);
    }
 
    if(server.arg("direction") == "back")
    {
-      Serial.println("back");
       Serial.write(2);
    }
 
    if(server.arg("direction") == "right")
    {
-       Serial.println("right");
        Serial.write(3);
    }
 
    if(server.arg("direction") == "left")
    {
-      Serial.println("left");
       Serial.write(4);
    }
    if(server.arg("direction") == "stop_trans")
    {
-    Serial.println("stop");
     Serial.write(9);
-   }
+   }*/
  }
  
 }

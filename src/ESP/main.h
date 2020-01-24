@@ -71,7 +71,7 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
           });}
     
     function postStop(){
-      $.post( "/controller", {direction: "stop_trans"})
+      $.post( "/controller", {direction: 9})
         .done(function(data){
           console.log("1");
           });}
@@ -80,39 +80,38 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
       if(control){
         $('.manual').css("background-color", "#800D2F");
       }else{
-       console.log("java script is kut");
        $('.manual').css("background-color", "green");
       }
       control = !control;
-      postDir("man");
+      postDir(5);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.forward').on('mousedown', function() {
-      postDir("forward");
+      postDir(1);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.back').on('mousedown', function() {
-      postDir("back");
+      postDir(2);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.right').on('mousedown', function() {
-      postDir("right");
+      postDir(3);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
     });
 
     $('.left').on('mousedown', function() {
-      postDir("left");
+      postDir(4);
     }).on('mouseup', function() {
       postStop();
       clearTimeout(timeoutId);
