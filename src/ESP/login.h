@@ -1,5 +1,4 @@
-#include <Esp.h>
-const char LOGIN_page[] PROGMEM = R"=====(
+const char LOGIN_page[] = R"=====(
 <!DOCTYPE html>
 <HEAD>
 <link rel="stylesheet" href="https://unpkg.com/picnic">

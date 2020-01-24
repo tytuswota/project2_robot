@@ -1,4 +1,3 @@
-#include <Esp.h>
 const char CONTROLLER_page[] PROGMEM = R"=====(
 <!DOCTYPE html>
 <HEAD>
@@ -48,7 +47,6 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     grid-row-start: 3;
     grid-row-end: 3;
   }
-
   .container-item {
     background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.8);
@@ -80,7 +78,6 @@ const char CONTROLLER_page[] PROGMEM = R"=====(
     
     $('.manual').on('mousedown', function() {
       if(control){
-        console.log("kut zooi");
         $('.manual').css("background-color", "#800D2F");
       }else{
        console.log("java script is kut");
