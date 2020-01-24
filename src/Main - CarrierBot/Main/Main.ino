@@ -13,24 +13,18 @@
 #include "motorController.cpp"
 #include "UltrasonicSensor.cpp"
 
-#define irLeft 7
-#define irRight 8
+#define irLeft 8
+#define irRight 7
 
 #define usTrigFront 11
-#define usEchoFront 2
+#define usEchoFront 3
 #define usTrigUnder 12
-#define usEchoUnder 3
+#define usEchoUnder 2
 
 #define motorPin1A 10
 #define motorPin1B 9
-#define motorPin2A 4
-#define motorPin2B 5
-
-#define hallSensor1 A0
-#define hallSensor2 A1
-#define hallSensor3 A2
-
-#define magnetDetectionLed A3
+#define motorPin2A 5
+#define motorPin2B 4
 
 #define usFrontDistance 150
 #define usUnderDistance 300
@@ -62,10 +56,6 @@ void setup() {
   Serial.begin(9600);
   pinMode(irLeft, INPUT_PULLUP);
   pinMode(irRight, INPUT_PULLUP);
-  pinMode(hallSensor1, INPUT_PULLUP);
-  pinMode(hallSensor2, INPUT_PULLUP);
-  pinMode(hallSensor3, INPUT_PULLUP);
-  pinMode(magnetDetectionLed, OUTPUT);
   usUnder = UltrasonicSensor(usTrigUnder, usEchoUnder, isrUnder);
   usFront = UltrasonicSensor(usTrigFront, usEchoFront, isrFront);
   startTimerInterruptLoop();
@@ -111,11 +101,11 @@ void loop() {
     int irLeftVal = digitalRead(irLeft);
     int irRightVal = digitalRead(irRight);
 
-    if (debug) Serial.println("IR Left : " + (String) irLeftVal);
-    if (debug) Serial.println("IR Right : " + (String) irRightVal);
+     Serial.println("IR Left : " + (String) irLeftVal);
+     Serial.println("IR Right : " + (String) irRightVal);
 
-    if (debug) Serial.println("US Front : " + (String) timeToMillimeters(pulseTimeFront));
-    if (debug) Serial.println("US Under : " + (String) timeToMillimeters(pulseTimeUnder));
+     Serial.println("US Front : " + (String) timeToMillimeters(pulseTimeFront));
+     Serial.println("US Under : " + (String) timeToMillimeters(pulseTimeUnder));
 
     if (timeToMillimeters(pulseTimeFront) < usFrontDistance) {
       unsigned long prevTime = millis();
@@ -130,7 +120,7 @@ void loop() {
       motor.motorA("forward");
     }
     else if (timeToMillimeters(pulseTimeUnder) > usUnderDistance) {
-      Serial.print(usUnderDistance);
+//      Serial.print(usUnderDistance);
       unsigned long prevTime = millis();
       while(prevTime + 2000 > millis()){
         motor.motorA("backward");
@@ -237,29 +227,7 @@ void getEspResponse() {
   else if(espResponse != 5 && oneTime){
     oneTime = false;
   }
-
-  int hall1 = !(digitalRead(hallSensor1));
-  int hall2 = !(digitalRead(hallSensor2));
-  int hall3 = !(digitalRead(hallSensor3));
-
-  Serial.println("Hall 1: " + (String)hall1 + "\tHall 2: " + (String)hall2 + "\tHall 3: " + (String)hall3);
-
-  if(hall1 || hall2 || hall3){
-    hallSensors();
-  }
   
-  if (debug) Serial.println("ESP Response : " + (String)espResponse);
-}
-/*------------------------*/
-
-/*--Hall sensor Functies--*/
-void hallSensors() {
-  unsigned long ledTurnOffTime = millis();
-  while(ledTurnOffTime + 2000 > millis()) {
-    motor.motorA("stop");
-    motor.motorB("stop");
-    digitalWrite(magnetDetectionLed, 1);
-  }
-  digitalWrite(magnetDetectionLed, 0);
+//  if (debug) Serial.println("ESP Response : " + (String)espResponse);
 }
 /*------------------------*/

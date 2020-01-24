@@ -1,0 +1,10 @@
+Files:
+
+CarierBot.stl : TinkerCAD bestand van de carier.
+Design-2.0.ai : Illustrator bestand van de scout.
+Design-Bot 2.ai : Illustrator bestand van de carier.
+Elektrisch-Breadbord - CarierBot.png : Screenshot van de breadbord versie van de fritzing van de carier.
+Elektrisch-Breadbord.png : Screenshot van de breadbord versie van de fritzing van de scout.
+Elektrisch-Schema - CarierBot.png : Screenshot van de fritzing van de carier.
+Elektrisch-Schema.png : Screenshot van de fritzing van de scout.
+ScoutBot.stl : TinkerCAD bestand van de scout.
