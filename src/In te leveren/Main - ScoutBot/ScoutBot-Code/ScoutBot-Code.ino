@@ -172,10 +172,13 @@ void loop() {
 
 
 /*------us Functies------*/
+
+// takes a pulse time in microseconds and returns the distance in millimeters
 long timeToMillimeters(long pulseTime) {
   return ((pulseTime >> 1) / 2.9);
 }
 
+// start timer 1 at 10 Hz
 void startTimerInterruptLoop() {
   cli();
   TCCR1A = 0;
@@ -191,24 +194,36 @@ void startTimerInterruptLoop() {
   sei();
 }
 
+// every time timer 1 triggers, send a trigger pulse to usFront
+// when usFront sends a pulse back usUnder will be triggered to avoid interference
 ISR(TIMER1_COMPA_vect) {
   usFront.pulse();
 }
 
+// handle response from usFront, this is attached as ISR to the echo pin
 void isrFront() {
   static unsigned long start;
+
+  // start counting if the pin goes high
   if (digitalRead(usFront.echo)) {
     start = micros();
+
+  // stop counting if the pin goed low
   } else {
     pulseTimeFront = micros() - start;
   }
-  usUnder.pulse();
+  usUnder.pulse(); // send pulse to usUnder
 }
 
+// handle response from usUnder, this is attached as ISR to the echo pin
 void isrUnder() {
   static unsigned long start;
+
+  // start counting if the pin goes high
   if (digitalRead(usUnder.echo)) {
     start = micros();
+
+  // stop counting if the pin goes low
   } else {
     pulseTimeUnder = micros() - start;
   }
@@ -247,6 +262,8 @@ void getEspResponse() {
 /*------------------------*/
 
 /*--Hall sensor Functies--*/
+
+// function to execute when a magnet is deteted
 void hallSensors() {
   unsigned long ledTurnOffTime = millis();
   motor.motorA("stop"); //Stop both motors
